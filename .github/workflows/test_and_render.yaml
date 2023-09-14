@@ -1,0 +1,57 @@
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test_and_render:
+    runs-on: ubuntu-latest
+    container:
+      image: europe-west3-docker.pkg.dev/tfl-prod-ea3b/tfl-docker/tfl-training-rl:latest
+      options: --user root
+      credentials:
+        username: _json_key
+        password: ${{ secrets.GAR_JSON_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+          persist-credentials: false
+      # lfs=true is not enough, see https://stackoverflow.com/questions/61463578/github-actions-actions-checkoutv2-lfs-true-flag-not-converting-pointers-to-act
+      # config tweak is needed b/c of annoying bugs in actions/checkout, see https://github.com/actions/checkout/issues/766
+      - name: Pull LFS Objects
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git lfs pull
+      - name: Install package
+        run: pip install -e .
+      - name: Run tests
+        run: pytest
+      - name: Build docs
+#       NOTE: feel free to delete the if-else and just keep the else line. It's simply a special case to make the
+#       automatically generated thesan_output fully representative. In normal cases, the notebooks are rendered
+#       locally and html is committed
+        run: |
+          if [ $(basename "$PWD") = "thesan_output" ]; then 
+            bash build_scripts/build_docs.sh --execute
+          else
+            bash build_scripts/build_docs.sh --skip-nbconvert --skip-jupyter-book
+          fi
+      - name: Prepare Pages
+        if: github.ref == 'refs/heads/master'
+        run: mv docs/_build/html/* public/
+      - name: Deploy Pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        if: github.ref == 'refs/heads/master'
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: public
+          TARGET_FOLDER: .
+          CLEAN: true
+          SINGLE_COMMIT: true

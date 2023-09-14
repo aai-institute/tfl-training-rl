@@ -1,0 +1,14 @@
+*
+
+!src
+!notebooks
+!setup.py
+!scripts
+!build_scripts
+!MANIFEST.in
+!config.yml
+!requirements*.txt
+!pyproject.toml
+!entrypoint.sh
+!README.md
+!LICENSE*
