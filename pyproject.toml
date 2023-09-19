@@ -24,6 +24,7 @@ tensorboard = "^2.5.0"
 # Torch 2.0.1 causes problems, see https://github.com/pytorch/pytorch/issues/100974
 torch = "^2.0.0, !=2.0.1"
 tqdm = "*"
+notebook = "^7.0.3"
 
 
 [tool.poetry.extras]
