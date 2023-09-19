@@ -27,6 +27,7 @@ tqdm = "*"
 notebook = "<7.0.0"
 rise = "^5.7.1"
 jupyter-contrib-nbextensions = "^0.7.0"
+traitlets = "5.9.0"
 
 
 [tool.poetry.extras]
