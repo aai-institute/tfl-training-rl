@@ -7,7 +7,7 @@ name = "tfl training rl"
 version = "0.1.0"
 description = "A transferlab training"
 authors = [
-    "Michel Panchenko",
+    "Michael Panchenko",
     "Ivan Rodriguez",
     "Anes Benmerzoug",
 ]
