@@ -6,7 +6,11 @@ build-backend = "poetry.core.masonry.api"
 name = "tfl training rl"
 version = "0.1.0"
 description = "A transferlab training"
-authors = ["m.panchenko@appliedai.de"]
+authors = [
+    "Michel Panchenko",
+    "Ivan Rodriguez",
+    "Anes Benmerzoug",
+]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/aai-institute/tfl-training-rl"
@@ -14,6 +18,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 exclude = ["test/*"]
+packages = [
+    {include = "training_rl", from = "src"}
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -28,6 +35,7 @@ notebook = "<7.0.0"
 rise = "^5.7.1"
 jupyter-contrib-nbextensions = "^0.7.0"
 traitlets = "5.9.0"
+matplotlib = "^3.8.0"
 
 
 [tool.poetry.extras]
