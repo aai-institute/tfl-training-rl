@@ -36,6 +36,8 @@ rise = "^5.7.1"
 jupyter-contrib-nbextensions = "^0.7.0"
 traitlets = "5.9.0"
 matplotlib = "^3.8.0"
+pandas = {extras = ["performance"], version = "^2.1.0"}
+accsr = "^0.4.5"
 
 
 [tool.poetry.extras]
