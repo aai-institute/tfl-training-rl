@@ -40,13 +40,6 @@ pandas = {extras = ["performance"], version = "^2.1.0"}
 accsr = "^0.4.5"
 
 
-[tool.poetry.extras]
-atari = ["atari_py", "opencv-python"]
-mujoco = ["mujoco_py"]
-pybullet = ["pybullet"]
-envpool = ["envpool"]
-
-
 [tool.poetry.group.dev]
 optional = true
 [tool.poetry.group.dev.dependencies]
@@ -131,16 +124,12 @@ max-complexity = 20
 "docs/**" = ["D103"]
 "examples/**" = ["D103"]
 
-
-[tool.poetry_bumpversion.file."tianshou/__init__.py"]
-
 [tool.poetry-sort]
 move-optionals-to-bottom = true
 
 # keep relevant parts in sync with pre-commit
 [tool.poe.tasks]  # https://github.com/nat-n/poethepoet
-test = "pytest test --cov=tianshou --cov-report=xml --cov-report=term-missing --durations=0 -v --color=yes"
-test-reduced = "pytest test/base test/continuous --cov=tianshou --durations=0 -v --color=yes"
+test = "pytest test --cov=training_rl --cov-report=xml --cov-report=term-missing --durations=0 -v --color=yes"
 _black_check = "black --check ."
 _ruff_check = "ruff check ."
 _black_format = "black ."

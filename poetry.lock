@@ -4530,13 +4530,7 @@ files = [
 [package.extras]
 test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
 
-[extras]
-atari = []
-envpool = []
-mujoco = []
-pybullet = []
-
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "55e8169e463f0d0abb32e9b35b4c7c65df59a8d9beaa22787cfd8cb118c26a25"
+content-hash = "8021ed19c6533205c931e8691f9d183cd7dbc34ce3c24f803d29d5841a8b0b06"
