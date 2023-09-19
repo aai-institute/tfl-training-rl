@@ -6,7 +6,11 @@ build-backend = "poetry.core.masonry.api"
 name = "tfl training rl"
 version = "0.1.0"
 description = "A transferlab training"
-authors = ["m.panchenko@appliedai.de"]
+authors = [
+    "Michael Panchenko",
+    "Ivan Rodriguez",
+    "Anes Benmerzoug",
+]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/aai-institute/tfl-training-rl"
@@ -14,6 +18,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 exclude = ["test/*"]
+packages = [
+    {include = "training_rl", from = "src"}
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -24,13 +31,13 @@ tensorboard = "^2.5.0"
 # Torch 2.0.1 causes problems, see https://github.com/pytorch/pytorch/issues/100974
 torch = "^2.0.0, !=2.0.1"
 tqdm = "*"
-
-
-[tool.poetry.extras]
-atari = ["atari_py", "opencv-python"]
-mujoco = ["mujoco_py"]
-pybullet = ["pybullet"]
-envpool = ["envpool"]
+notebook = "<7.0.0"
+rise = "^5.7.1"
+jupyter-contrib-nbextensions = "^0.7.0"
+traitlets = "5.9.0"
+matplotlib = "^3.8.0"
+pandas = {extras = ["performance"], version = "^2.1.0"}
+accsr = "^0.4.5"
 
 
 [tool.poetry.group.dev]
@@ -117,16 +124,12 @@ max-complexity = 20
 "docs/**" = ["D103"]
 "examples/**" = ["D103"]
 
-
-[tool.poetry_bumpversion.file."tianshou/__init__.py"]
-
 [tool.poetry-sort]
 move-optionals-to-bottom = true
 
 # keep relevant parts in sync with pre-commit
 [tool.poe.tasks]  # https://github.com/nat-n/poethepoet
-test = "pytest test --cov=tianshou --cov-report=xml --cov-report=term-missing --durations=0 -v --color=yes"
-test-reduced = "pytest test/base test/continuous --cov=tianshou --durations=0 -v --color=yes"
+test = "pytest test --cov=training_rl --cov-report=xml --cov-report=term-missing --durations=0 -v --color=yes"
 _black_check = "black --check ."
 _ruff_check = "ruff check ."
 _black_format = "black ."
