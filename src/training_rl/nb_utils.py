@@ -1,7 +1,7 @@
 import os
 import random
+from collections.abc import Sequence
 from itertools import zip_longest
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -12,8 +12,11 @@ from IPython.display import HTML, Markdown, display
 from .config import default_remote_storage, get_config, root_dir
 from .constants import LATEX_MACROS
 
+__all__ = ["set_random_seed", "TflWorkshopMagic", "display_dataframes_side_by_side"]
+
 
 def set_random_seed(seed: int = 16) -> None:
+    """Sets random seed (as name suggests...)."""
     random.seed(seed)
     np.random.seed(seed)
     try:
@@ -64,11 +67,9 @@ class TflWorkshopMagic(Magics):
 
     @line_magic
     def download_data(self, path: str):
-        """
-        Defines the magic command %download_data <path> that will download the data from the remote storage.
+        """Defines the magic command %download_data <path> that will download the data from the remote storage.
         If no path is provided, it will download all data. The path should be relative to the data directory.
         """
-
         base_data_rel_path = os.path.relpath(self._c.data, root_dir)
         # prepend the base data path to the path.
         # If path was empty, the separator is removed, resulting in the base path
@@ -77,9 +78,8 @@ class TflWorkshopMagic(Magics):
 
     @line_magic
     def presentation_style(self, style_file: str):
-        """
-        Apply the styles to the notebook (outside presentation mode).
-        **NOTE**: Has to be the last command in a cell
+        """Apply the styles to the notebook (outside presentation mode).
+        **NOTE**: Has to be the last command in a cell.
 
         :param style_file: Relative path to the CSS file containing
             the style that will be applied to the notebook cells.
@@ -89,7 +89,7 @@ class TflWorkshopMagic(Magics):
         # because ipython actively sends an empty string as the value of the argument if nothing is passed...
         if not style_file:
             style_file = "rise.css"
-        with open(style_file, "r") as f:
+        with open(style_file) as f:
             styles = f.read()
         return HTML(f"<style>{styles}</style>")
 
@@ -98,25 +98,23 @@ def display_dataframes_side_by_side(
     dataframes: Sequence[pd.DataFrame],
     captions: Sequence = (),
 ):
-    """
-    Display pandas dataframes side by side in a jupyter notebook.
+    """Display pandas dataframes side by side in a jupyter notebook.
 
     Inspired by: https://stackoverflow.com/a/64323280
     """
     if len(captions) > len(dataframes):
         raise ValueError(
             f"There are more captions than dataframes. "
-            f"Got {len(captions)} captions and {len(dataframes)} dataframes."
+            f"Got {len(captions)} captions and {len(dataframes)} dataframes.",
         )
 
     # NOTE: we previously had a widgets based solution, but it messes something
     # up in the notebooks state in a very evil and subtle way.
     output = ""
     for caption, df in zip_longest(captions, dataframes):
-        caption = caption or ""
         output += (
             df.style.set_table_attributes("style='display:inline'")
-            .set_caption(caption)
+            .set_caption(caption or "")
             .to_html()
         )
         output += "\xa0\xa0\xa0"
