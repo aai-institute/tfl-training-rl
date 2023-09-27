@@ -40,6 +40,8 @@ pandas = {extras = ["performance"], version = "^2.1.0"}
 accsr = "^0.4.5"
 control = "^0.9.4"
 slycot = "^0.5.4"
+ipywidgets = "^8.1.1"
+mediapy = "^1.1.9"
 
 
 [tool.poetry.group.dev]
