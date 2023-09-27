@@ -6,6 +6,7 @@ that was further customized for appliedAI purposes
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap');
 
 
+/*
 body {
     font-family: 'Work Sans', sans-serif !important;
     text-transform: initial !important;
@@ -20,6 +21,7 @@ body {
 .reveal, div.text_cell_render, .md-slide, .sidebar-wrapper {
     font-size: 1.5rem !important;
 }
+*/
 
 .navbar-default .navbar-nav > li > a {
     color: #00747b !important;
@@ -66,10 +68,11 @@ body.rise-enabled .reveal ol, body.rise-enabled .reveal dl, body.rise-enabled .r
     margin-top: 0.2em;
 }
 
+/*
 .CodeMirror-lines, .output_text {
     font-size: 1.5rem !important;
 }
-
+*/
 
 h1.plan, h2.plan, h3.plan {
     text-align: center;
