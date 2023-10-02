@@ -21,6 +21,7 @@ exclude = ["test/*"]
 packages = [
     {include = "training_rl", from = "src"}
 ]
+include=["src/training_rl/assets"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -42,6 +43,8 @@ control = "^0.9.4"
 slycot = "^0.5.4"
 ipywidgets = "^8.1.1"
 mediapy = "^1.1.9"
+matplotx = "^0.3.10"
+seaborn = "^0.13.0"
 
 
 [tool.poetry.group.dev]

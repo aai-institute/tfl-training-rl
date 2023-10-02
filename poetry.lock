@@ -2114,6 +2114,26 @@ files = [
 traitlets = "*"
 
 [[package]]
+name = "matplotx"
+version = "0.3.10"
+description = "Useful styles and extensions for Matplotlib"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "matplotx-0.3.10-py3-none-any.whl", hash = "sha256:4d7adafdb001c771d66d9362bb8ca99fcaed15319259223a714f36793dfabbb8"},
+    {file = "matplotx-0.3.10.tar.gz", hash = "sha256:b6926ce5274cf5da966cb46b90a8c7fefb761478c6c85c8f7ed3ee8ec90e86e5"},
+]
+
+[package.dependencies]
+matplotlib = "*"
+numpy = ">=1.20.0"
+
+[package.extras]
+all = ["networkx", "pypng", "scipy"]
+contour = ["networkx"]
+spy = ["pypng", "scipy"]
+
+[[package]]
 name = "mediapy"
 version = "1.1.9"
 description = "Read/write/show images and videos in an IPython notebook"
@@ -3886,6 +3906,27 @@ doc = ["matplotlib (>2)", "numpydoc", "pydata-sphinx-theme (==0.9.0)", "sphinx (
 test = ["asv", "gmpy2", "mpmath", "pytest", "pytest-cov", "pytest-xdist", "scikit-umfpack", "threadpoolctl"]
 
 [[package]]
+name = "seaborn"
+version = "0.13.0"
+description = "Statistical data visualization"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "seaborn-0.13.0-py3-none-any.whl", hash = "sha256:70d740828c48de0f402bb17234e475eda687e3c65f4383ea25d0cc4728f7772e"},
+    {file = "seaborn-0.13.0.tar.gz", hash = "sha256:0e76abd2ec291c655b516703c6a022f0fd5afed26c8e714e8baef48150f73598"},
+]
+
+[package.dependencies]
+matplotlib = ">=3.3,<3.6.1 || >3.6.1"
+numpy = ">=1.20,<1.24.0 || >1.24.0"
+pandas = ">=1.2"
+
+[package.extras]
+dev = ["flake8", "flit", "mypy", "pandas-stubs", "pre-commit", "pytest", "pytest-cov", "pytest-xdist"]
+docs = ["ipykernel", "nbconvert", "numpydoc", "pydata_sphinx_theme (==0.10.0rc2)", "pyyaml", "sphinx (<6.0.0)", "sphinx-copybutton", "sphinx-design", "sphinx-issues"]
+stats = ["scipy (>=1.7)", "statsmodels (>=0.12)"]
+
+[[package]]
 name = "send2trash"
 version = "1.8.2"
 description = "Send file to trash natively under Mac OS X, Windows and Linux"
@@ -4600,4 +4641,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3f71b0d154b05ec5c97fe8f61d445a025aa990d17e037351044d98f06ce804c6"
+content-hash = "5dc9cd72f06fd0e18c3fca4cf05912546d4815705c7a7fa6e83a223e08e60eab"
