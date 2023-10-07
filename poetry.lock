@@ -368,6 +368,61 @@ files = [
 ]
 
 [[package]]
+name = "casadi"
+version = "3.6.3"
+description = "CasADi -- framework for algorithmic differentiation and numeric optimization"
+optional = false
+python-versions = "*"
+files = [
+    {file = "casadi-3.6.3-cp27-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:884c07617fbbedbd047900d6f2ab86e933064efc517b973fa4139fc60543e498"},
+    {file = "casadi-3.6.3-cp27-none-manylinux1_i686.whl", hash = "sha256:6f9c1fadfb1eb729f8906f01cd2b45f542846a386fb63d59eb1872451dda8de3"},
+    {file = "casadi-3.6.3-cp27-none-manylinux2010_x86_64.whl", hash = "sha256:041639615a866a7244e88905c40c15ef8f84bdedf0b4f92f72e4c5b56f8fe2dc"},
+    {file = "casadi-3.6.3-cp27-none-win_amd64.whl", hash = "sha256:418d345e47cbc957a49e28c7765a7f6e37f5eb73ab969e6c6cfcd204189c559c"},
+    {file = "casadi-3.6.3-cp310-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:9c8d360ee80dd65c0c7625e3dccfabdd6e78629a754fb28f6fd77e3d4893dc80"},
+    {file = "casadi-3.6.3-cp310-none-macosx_11_0_arm64.whl", hash = "sha256:a74cf436d42adf69d5ea16ba13d95f40585e148e856d00553f96740704fe2a03"},
+    {file = "casadi-3.6.3-cp310-none-manylinux2014_aarch64.whl", hash = "sha256:1995029b4f11d492cb5277645534bdd377340eaabe51dba3c6d9ed3a25f83f4c"},
+    {file = "casadi-3.6.3-cp310-none-manylinux2014_i686.whl", hash = "sha256:501ac40357dae0d224499f1b41b7d409703137ac7c8c1bcbb26444cff9d00de3"},
+    {file = "casadi-3.6.3-cp310-none-manylinux2014_x86_64.whl", hash = "sha256:d86511c92f09fa464937098bb47b5cdfd07952a0a2b236938b9370537e4532d6"},
+    {file = "casadi-3.6.3-cp310-none-win_amd64.whl", hash = "sha256:4d41d07a9a4c1cd9aa55a43ffe8921721dc5937b124075e903b4c0948e5dcb9b"},
+    {file = "casadi-3.6.3-cp311-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:9a2aab9799e8a597b737c8ebbde6fce9cad6177d51fef8f73310d429e4b76cb4"},
+    {file = "casadi-3.6.3-cp311-none-macosx_11_0_arm64.whl", hash = "sha256:55cff88af39c486895d5d6ec3c1862050dbd51ca879df81be1b1c86cb97e9115"},
+    {file = "casadi-3.6.3-cp311-none-manylinux2014_aarch64.whl", hash = "sha256:387e4832a6b98ecf71d7c6ceb129ca7bfe120dd6705162aecee70df13bd8cb62"},
+    {file = "casadi-3.6.3-cp311-none-manylinux2014_i686.whl", hash = "sha256:8357cfae956d1c4d2c8e765e93fcfad537f83e8278d2bd7c9d4f66213fdc6f4e"},
+    {file = "casadi-3.6.3-cp311-none-manylinux2014_x86_64.whl", hash = "sha256:de87a486a4578f609bb93327004ee0a4598723cff5c0118828e1de31f01ea65b"},
+    {file = "casadi-3.6.3-cp311-none-win_amd64.whl", hash = "sha256:d5b5d49b3749aa075678206645b106fea104485285441f771ba5ef347d4bc394"},
+    {file = "casadi-3.6.3-cp35-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:9ba455b1afc4b70249810098458951bd37cb346350ed00e913ec93ddb3f15251"},
+    {file = "casadi-3.6.3-cp35-none-manylinux1_i686.whl", hash = "sha256:397b3754a0560e9c4ebb3ce9220bfe5194f6ef63dca6caa6695b7e43a170895b"},
+    {file = "casadi-3.6.3-cp35-none-manylinux2010_x86_64.whl", hash = "sha256:406423816ef79ba82e579bd999ba9aaa16ffcb071261d8ff32e3c404ee1e816b"},
+    {file = "casadi-3.6.3-cp35-none-win_amd64.whl", hash = "sha256:62fcabf79dfc1f3b7cf06eca1408556bc74a59a9de9dde4b779eff20ac243006"},
+    {file = "casadi-3.6.3-cp36-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:7972b476b20557592fd1193140e6d1067a91b98cbc96767b3ec2f68e500c5342"},
+    {file = "casadi-3.6.3-cp36-none-manylinux2014_aarch64.whl", hash = "sha256:692c284d838d11052c08fc8b38357858607f701ea6495bf9e22a0f2033811325"},
+    {file = "casadi-3.6.3-cp36-none-manylinux2014_i686.whl", hash = "sha256:e5bb5ae64de87568c5c3895ca649b209283e2ad61ddeaef1685c7e856e4044e0"},
+    {file = "casadi-3.6.3-cp36-none-manylinux2014_x86_64.whl", hash = "sha256:6b15e0bf452f7b3dface72e7d75ef2fe8566574abec51313540a6a251243e099"},
+    {file = "casadi-3.6.3-cp36-none-win_amd64.whl", hash = "sha256:b7148bc8b107b1bae4f66fe5b815edb69aca69de8ead2ee25e1b059781654550"},
+    {file = "casadi-3.6.3-cp37-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:3a184a4930a046ee788923a129032372f043027df7a2e08d25fd1fe72d1da8bd"},
+    {file = "casadi-3.6.3-cp37-none-manylinux2014_aarch64.whl", hash = "sha256:44ceea824512a594b286fff7646470d7ac58e363bcb40ce23a6ec0577e6af3f9"},
+    {file = "casadi-3.6.3-cp37-none-manylinux2014_i686.whl", hash = "sha256:ce42fb3df4e795bbb2178c4f9929bd8d0d359890ae1225c64a0c2795374fda25"},
+    {file = "casadi-3.6.3-cp37-none-manylinux2014_x86_64.whl", hash = "sha256:39a73fa7383862abae27ebe4158d23d588286b22d74505af8569f4b91acc51d7"},
+    {file = "casadi-3.6.3-cp37-none-win_amd64.whl", hash = "sha256:bede02743ac570b6289e8496563aa326dd4fdecc8c3e4f817b909cf6bc1b42cc"},
+    {file = "casadi-3.6.3-cp38-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:7e80e8eee3bb174f941d592dbc440f57c76c5d81bad59f3a361dbf47e6175a43"},
+    {file = "casadi-3.6.3-cp38-none-macosx_11_0_arm64.whl", hash = "sha256:c0bcd64e8bb0db6e6dcc24d1ee10ef7f2305ed2e9d2786c1dcae43e7fcd05943"},
+    {file = "casadi-3.6.3-cp38-none-manylinux2014_aarch64.whl", hash = "sha256:012970fec19a88326e010b8e8ef4d569e32246dabb8cad86c485263e3961f3b1"},
+    {file = "casadi-3.6.3-cp38-none-manylinux2014_i686.whl", hash = "sha256:4c718672247d12b437f5b8b2f62eae5c6541bd9125f233ae4977fbf3b2ff2de7"},
+    {file = "casadi-3.6.3-cp38-none-manylinux2014_x86_64.whl", hash = "sha256:3a3685525a278f5b450b8be9ab14bb367f2d0fc97f8400021ba406f63fab7795"},
+    {file = "casadi-3.6.3-cp38-none-win_amd64.whl", hash = "sha256:0e6f2ae61abb3969ccf9503e2ee576a4f5b437ba40a082e26660a5d9513c839c"},
+    {file = "casadi-3.6.3-cp39-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:7093cb7182db81b6184148121d61a68876ff9be55fb73c456927a344ff5983a2"},
+    {file = "casadi-3.6.3-cp39-none-macosx_11_0_arm64.whl", hash = "sha256:0a5383b295a499312657eb5c99a0e8f22e8bb06da774663bae69b322ec34dd6d"},
+    {file = "casadi-3.6.3-cp39-none-manylinux2014_aarch64.whl", hash = "sha256:6632b30197aa0d491afb7f6d30980636342eaf8a88fe7680c5eb3a37d4013c01"},
+    {file = "casadi-3.6.3-cp39-none-manylinux2014_i686.whl", hash = "sha256:5990366a5266dda537d45c6df583001a1519b86db00e1725e2d17304500e511d"},
+    {file = "casadi-3.6.3-cp39-none-manylinux2014_x86_64.whl", hash = "sha256:5177b2592f4c147fec882fad92b7282262979bdf8ad5a337f6531464eee19226"},
+    {file = "casadi-3.6.3-cp39-none-win_amd64.whl", hash = "sha256:d5b917443733123c634dbde7e5f971ffb87994af01c0d0d528f6d10ac78d97f7"},
+    {file = "casadi-3.6.3.tar.gz", hash = "sha256:2a953bd001327c9ae79018a1efa455852c8a4b4f47f5bdda5f0a07ec820d1880"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "certifi"
 version = "2023.7.22"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -917,6 +972,26 @@ files = [
     {file = "distlib-0.3.7-py2.py3-none-any.whl", hash = "sha256:2e24928bc811348f0feb63014e97aaae3037f2cf48712d51ae61df7fd6075057"},
     {file = "distlib-0.3.7.tar.gz", hash = "sha256:9dafe54b34a028eafd95039d5e5d4851a13734540f1331060d31c9916e7147a8"},
 ]
+
+[[package]]
+name = "do-mpc"
+version = "4.6.1"
+description = ""
+optional = false
+python-versions = "*"
+files = [
+    {file = "do_mpc-4.6.1-py3-none-any.whl", hash = "sha256:bb53339ce56d0dfacc38bde0463813f50f94982f3562100fb98439de0a641699"},
+    {file = "do_mpc-4.6.1.tar.gz", hash = "sha256:7752f8de2ffcc8f51aaa0ef76caf6aee14f6286ce0d82a3982758aa2a90157de"},
+]
+
+[package.dependencies]
+casadi = ">=3.6.0"
+matplotlib = "*"
+numpy = "*"
+scipy = "*"
+
+[package.extras]
+full = ["asyncua", "ipykernel", "onnx (>=1.13.0)", "packaging"]
 
 [[package]]
 name = "docutils"
@@ -4654,4 +4729,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "8a76763cd753665f1dc5c62da0c606aa30b27be3e419c6cf2f920ef67aa55e5b"
+content-hash = "4b2e7209f23f0975dbb86899f27f1529d93713da6faf98490ebd21e56dd9b18b"
