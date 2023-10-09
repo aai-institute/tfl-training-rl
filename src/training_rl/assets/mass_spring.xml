@@ -35,6 +35,6 @@
     </sensor>
 
     <actuator>
-		<motor ctrllimited="true" ctrlrange="-10 10" gear="2" joint="mass" name="slide"/>
+		<motor ctrllimited="true" ctrlrange="-20 20" gear="2" joint="mass" name="slide"/>
 	</actuator>
 </mujoco>

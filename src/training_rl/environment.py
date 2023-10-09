@@ -77,7 +77,7 @@ class MassSpringDamperEnv(MujocoEnv, utils.EzPickle):
 
     | Num | Action                    | Control Min | Control Max | Name (in corresponding XML file) | Joint | Unit      |
     |-----|---------------------------|-------------|-------------|----------------------------------|-------|-----------|
-    | 0   | Force applied on the mass | -10          | 10           | slider                           | slide | Force (N) |
+    | 0   | Force applied on the mass | -20          | 20           | slider                           | slide | Force (N) |
 
     ## Observation Space
 
