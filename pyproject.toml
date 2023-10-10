@@ -45,13 +45,12 @@ ipywidgets = "^8.1.1"
 mediapy = "^1.1.9"
 matplotx = "^0.3.10"
 seaborn = "^0.13.0"
-black = {extras = ["jupyter"], version = "^23.9.1"}
 
 
 [tool.poetry.group.dev]
 optional = true
 [tool.poetry.group.dev.dependencies]
-black = "^23.7.0"
+black = {extras = ["jupyter"], version = "^23.9.1"}
 mypy = "^1.4.1"
 poethepoet = "^0.20.0"
 pre-commit = "^3.3.3"
