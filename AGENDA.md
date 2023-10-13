@@ -7,13 +7,13 @@ Here is today's agenda:
 | Day No. | Title                                             | Duration |   Schedule    |
 |:-------:|---------------------------------------------------|:--------:|:-------------:|
 |    1    | Greeting and setting up the execution environment |  15 min  | 09:00 - 09:15 |
-|    1    | Introduction                                      |  45 min  | 09:15 - 10:00 |
-|    1    | Coffee Break                                      |  15 min  | 10:00 - 10:15 |
-|    1    | Introduction to Control Theory                    |  120 min | 10:15 - 12:15 |
-|    1    | Lunch Break                                       |  60 min  | 12:15 - 13:15 |
-|    1    | Control and Planning                              |  60 min  | 13:15 - 15:00 |
+|    1    | Introduction                                      |  30 min  | 09:15 - 09:45 |
+|    1    | Coffee Break                                      |  15 min  | 09:45 - 10:00 |
+|    1    | Introduction to Control Theory                    |  120 min | 10:00 - 12:00 |
+|    1    | Lunch Break                                       |  60 min  | 12:00 - 13:00 |
+|    1    | Control and Planning                              |  120 min | 13:00 - 15:00 |
 |    1    | Coffee Break                                      |  15 min  | 15:00 - 15:15 |
-|    1    | Recent Developments in Control Theory             |  45 min  | 15:15 - 17:00 |
+|    1    | Recent Developments in Control Theory             |  45 min  | 15:15 - 16:00 |
 
 # Agend - Reinforcement Learning
 
