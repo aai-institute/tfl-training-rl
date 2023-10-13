@@ -1,6 +1,9 @@
 import control as ct
+import do_mpc
 import matplotlib.pyplot as plt
 import numpy as np
+from IPython.display import HTML
+from matplotlib.animation import FuncAnimation
 from numpy.typing import NDArray
 from scipy.signal import find_peaks, lti, step
 
@@ -13,6 +16,8 @@ __all__ = [
     "plot_estimator_response",
     "plot_mass_spring_damper_results",
     "plot_inverted_pendulum_results",
+    "animate_mass_spring_damper_simulation",
+    "animate_inverted_pendulum_simulation",
 ]
 
 
@@ -209,3 +214,148 @@ def plot_inverted_pendulum_results(
     ax3.set_xlabel("Time")
     ax3.set_ylabel("Force")
     fig.tight_layout()
+
+
+def animate_mass_spring_damper_simulation(data: do_mpc.data.MPCData | do_mpc.data.Data) -> HTML:
+    """Animated plots of mass-spring-damper simulation."""
+    plt.close()
+    plt.ioff()
+    fig = plt.figure()
+    graphics = do_mpc.graphics.Graphics(data)
+
+    ax1 = plt.subplot2grid((3, 2), (0, 0), rowspan=3)
+    ax2 = plt.subplot2grid((3, 2), (0, 1))
+    ax3 = plt.subplot2grid((3, 2), (1, 1))
+    ax4 = plt.subplot2grid((3, 2), (2, 1))
+
+    ax2.set_ylabel("Position")
+    ax3.set_ylabel("Velocity")
+    ax4.set_ylabel("Force")
+
+    # Axis on the right.
+    for ax in [ax2, ax3, ax4]:
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        if ax != ax4:
+            ax.xaxis.set_ticklabels([])
+
+    ax4.set_xlabel("Time")
+
+    graphics.add_line(var_type="_x", var_name="position", axis=ax2)
+    graphics.add_line(var_type="_x", var_name="velocity", axis=ax3)
+    graphics.add_line(var_type="_u", var_name="force", axis=ax4)
+
+    # reference
+    ax2.axhline(0.1, color="red")
+
+    # Mass-Spring-Damper
+    ax1.axhline(0, color="black")
+    bar = ax1.plot([], [], "-o", linewidth=5, markersize=10)
+
+    ax1.set_xlim(-1.8, 1.8)
+    ax1.set_ylim(-0.1, 0.3)
+    ax1.set_axis_off()
+
+    fig.align_ylabels()
+    fig.tight_layout()
+
+    plt.ion()
+    x_arr = data["_x"]
+    u_arr = data["_u"]
+
+    # Axis limits
+    ax2.set_ylim(np.min(x_arr[:, 0]) - 0.01, 1.1 * np.max(x_arr[:, 0]))
+    ax3.set_ylim(np.min(x_arr[:, 1]) - 0.01, 1.1 * np.max(x_arr[:, 1]))
+    ax4.set_ylim(np.min(u_arr) - 1, 1.1 * np.max(u_arr))
+
+    def update(t_ind):
+        xy = np.array(
+            [
+                [0.0, 0.0],
+                [0.0, 0.3 + x_arr[t_ind, 0]],
+            ],
+        )
+        bar[0].set_data(xy)
+        graphics.plot_results(t_ind)
+        if isinstance(data, do_mpc.data.MPCData):
+            graphics.plot_predictions(t_ind)
+
+    anim = FuncAnimation(fig, update, frames=len(data["_time"]), repeat=False, interval=100)
+    return HTML(anim.to_html5_video())
+
+
+def animate_inverted_pendulum_simulation(data: do_mpc.data.MPCData | do_mpc.data.Data) -> HTML:
+    """Animated plots of inverted pendulum simulation."""
+    plt.close()
+    plt.ioff()
+    fig = plt.figure()
+    graphics = do_mpc.graphics.Graphics(data)
+
+    ax1 = plt.subplot2grid((3, 2), (0, 0), rowspan=3)
+    ax2 = plt.subplot2grid((3, 2), (0, 1))
+    ax3 = plt.subplot2grid((3, 2), (1, 1))
+    ax4 = plt.subplot2grid((3, 2), (2, 1))
+
+    ax2.set_ylabel("$\\theta$")
+    ax3.set_ylabel("$\\dot{\\theta}$")
+    ax4.set_ylabel("Force")
+
+    # Axis on the right.
+    for ax in [ax2, ax3, ax4]:
+        ax.yaxis.set_label_position("right")
+        ax.yaxis.tick_right()
+        if ax != ax4:
+            ax.xaxis.set_ticklabels([])
+
+    ax4.set_xlabel("Time")
+
+    graphics.add_line(var_type="_x", var_name="theta", axis=ax2)
+    graphics.add_line(var_type="_x", var_name="dtheta", axis=ax3)
+    graphics.add_line(var_type="_u", var_name="force", axis=ax4)
+
+    # reference
+    ax2.axhline(0.0, color="red")
+
+    # Inverted Pendulum
+    ax1.axhline(0, color="black")
+    bar = ax1.plot([], [], "-o", linewidth=5, markersize=10)
+
+    ax1.set_xlim(-2.1, 2.1)
+    ax1.set_ylim(-1, 1)
+    ax1.set_axis_off()
+
+    fig.align_ylabels()
+    fig.tight_layout()
+
+    plt.ion()
+    x_arr = data["_x"]
+    u_arr = data["_u"]
+
+    # Axis limits
+    ax2.set_ylim(np.min(x_arr[:, 0]) - 0.1, 1.1 * np.max(x_arr[:, 0]))
+    ax3.set_ylim(np.min(x_arr[:, 1]) - 0.1, 1.1 * np.max(x_arr[:, 1]))
+    ax4.set_ylim(np.min(u_arr) - 1, 1.1 * np.max(u_arr))
+
+    def update(t_ind):
+        # Get the x,y coordinates of the bar for the given state x.
+        x = x_arr[t_ind]
+        line_x = np.array(
+            [
+                0,
+                0.3 * np.sin(x[0]),
+            ],
+        )
+        line_y = np.array(
+            [
+                0,
+                0.3 * np.cos(x[0]),
+            ],
+        )
+        line = np.stack([line_x, line_y])
+        bar[0].set_data(line)
+        graphics.plot_results(t_ind)
+        if isinstance(data, do_mpc.data.MPCData):
+            graphics.plot_predictions(t_ind)
+
+    anim = FuncAnimation(fig, update, frames=len(data["_time"]), repeat=False, interval=100)
+    return HTML(anim.to_html5_video())
