@@ -11,6 +11,7 @@ if [ ! -d  "${ROOT_DIR}" ]; then
 fi
 
 cd "${ROOT_DIR}" || exit
+poetry shell
 jupyter trust notebooks/*.ipynb
 pip install -e "."; echo "Installed training_rl" ; python scripts/download_data.py
 

@@ -1,8 +1,9 @@
-FROM jupyter/minimal-notebook:python-3.9.7
+FROM jupyter/minimal-notebook:python-3.11
 
 # keep env var name in sync with config_local.yml
 ARG PARTICIPANT_BUCKET_READ_SECRET
 ENV PARTICIPANT_BUCKET_READ_SECRET=${PARTICIPANT_BUCKET_READ_SECRET}
+ENV POETRY_VERSION=1.6.1
 
 RUN if [ -z "$PARTICIPANT_BUCKET_READ_SECRET" ]; \
       then echo "The build arg PARTICIPANT_BUCKET_READ_SECRET must be set to non-zero, e.g. \
@@ -18,26 +19,17 @@ RUN apt-get update && apt-get upgrade -y
 
 # pandoc needed for docs, see https://nbsphinx.readthedocs.io/en/0.7.1/installation.html?highlight=pandoc#pandoc
 # gh-pages action uses rsync
-RUN apt-get -y install pandoc git-lfs rsync
+# gcc, gfortran and libopenblas-dev are needed for slycot, which in turn is needed by the python-control package
+# build-essential required for scikit-build
+RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential gcc gfortran libopenblas-dev
 
 USER ${NB_UID}
 
+# Install poetry according to
+# https://python-poetry.org/docs/#installing-manually
+RUN pip install setuptools "poetry==$POETRY_VERSION"
+
 WORKDIR /tmp
-COPY build_scripts build_scripts
-RUN bash build_scripts/install_presentation_requirements.sh
-
-COPY requirements-test.txt .
-RUN pip install -r requirements-test.txt
-
-
-# NOTE: this breaks down when requirements contain pytorch (file system too large to fit in RAM, even with 16GB)
-# NOTE: this might break down when requirements contain pytorch (file system too large to fit in RAM, even with 16GB)
-# If pytorch is a requirement, the suggested solution is to keep a requirements-docker.txt and only install
-# the lighter requirements. The install of the remaining requirements then has to happen at runtime
-# instead of build time (usually as part of the entrypoint)
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 
 # Start of HACK: the home directory is overwritten by a mount when a jhub server is started off this image
 # Thus, we create a jovyan-owned directory to which we copy the code and then move it to the home dir as part
@@ -58,3 +50,11 @@ ENTRYPOINT ["/tmp/code/entrypoint.sh"]
 WORKDIR "${HOME}"
 
 COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
+
+# Move to the code dir to install dependencies as the CODE_DIR contains the
+# complete code base, including the poetry.lock file 
+WORKDIR $CODE_DIR
+
+RUN poetry config virtualenvs.in-project true \
+      && poetry install --no-interaction --no-ansi \
+      && PATH=$CODE_DIR/.venv/bin:$PATH bash build_scripts/install_presentation_requirements.sh
