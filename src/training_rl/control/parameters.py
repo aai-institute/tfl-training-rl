@@ -23,10 +23,14 @@ class InvertedPendulumParameters:
     M: Mass of the cart.
     l: Length of the pendulum.
     g: Gravitational constant.
+    mu_c: Cart friction constant.
+    mu_p: Pendulum friction constant.
 
     """
 
-    m: float = 2
+    m: float = 10
     M: float = 10
     l: float = 0.3
     g: float = 9.81
+    mu_c: float = 1.0
+    mu_p: float = 1.1
