@@ -18,7 +18,8 @@ Here is today's agenda:
 |    1    | Control and Planning                              |  60 min  | 14:20 - 15:20 |
 |    1    | Coffee Break                                      |  15 min  | 15:20 - 15:35 |
 |    1    | Recent Developments in Control Theory             |  60 min  | 15:35 - 16:35 |
-|    1    | Feedback Form                                     |  15 min  | 16:35 - 16:50 |
+|    1    | Concluding Remarks                                |  15 min  | 16:35 - 16:50 |
+|    1    | Feedback Form                                     |  10 min  | 16:50 - 17:00 |
 
 # Agend - Reinforcement Learning
 
