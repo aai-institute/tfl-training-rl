@@ -13,12 +13,7 @@ fi
 cd "${ROOT_DIR}" || exit
 
 # use poetry for package mgmt.
-poetry run jupyter trust notebooks/*.ipynb
 poetry run pip show notebook
-poetry run pip install -U notebook==6.5.4
-poetry run python -m ipykernel install --user --name tfl-training-rl
-
-
 # original entrypoint, see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile#L150
 # need -s option for tini to work properly when started not as PID 1
 tini -s -g -- "$@"

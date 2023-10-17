@@ -43,6 +43,6 @@ COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 # complete code base, including the poetry.lock file 
 WORKDIR $CODE_DIR
 
-RUN poetry config virtualenvs.in-project true \
-      && poetry install --no-interaction --no-ansi \
-      && PATH=$CODE_DIR/.venv/bin:$PATH bash build_scripts/install_presentation_requirements.sh
+RUN poetry config virtualenvs.in-project true
+RUN poetry install --no-interaction --no-ansi
+RUN bash build_scripts/install_presentation_requirements.sh
