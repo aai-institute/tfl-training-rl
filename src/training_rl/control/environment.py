@@ -1,7 +1,8 @@
 import importlib.resources
 import math
 import os
-from typing import ClassVar
+from dataclasses import dataclass
+from typing import ClassVar, Protocol
 
 import numpy as np
 from gymnasium import Env, utils
@@ -13,8 +14,13 @@ from gymnasium.envs.mujoco.inverted_pendulum_v4 import (
 from gymnasium.spaces import Box
 from gymnasium.wrappers import OrderEnforcing, PassiveEnvChecker, TimeLimit
 from gymnasium.wrappers.render_collection import RenderCollection
+from numpy.typing import NDArray
 
-__all__ = ["create_inverted_pendulum_environment", "create_mass_spring_damper_environment"]
+__all__ = [
+    "create_inverted_pendulum_environment",
+    "create_mass_spring_damper_environment",
+    "simulate_environment",
+]
 
 
 ASSETS_DIR = importlib.resources.files(__package__) / "../assets"
@@ -170,3 +176,50 @@ class MassSpringDamperEnv(MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([self.data.qpos, self.data.qvel]).ravel()
+
+
+class FeedbackController(Protocol):
+    def act(self, observation: NDArray) -> NDArray:
+        ...
+
+
+@dataclass
+class EnvironmentSimulationResults:
+    frames: list[NDArray]
+    observations: NDArray
+    actions: NDArray
+
+
+def simulate_environment(
+    env: Env,
+    *,
+    controller: FeedbackController,
+    max_steps: int = 500,
+) -> EnvironmentSimulationResults:
+    """Simulates the passed environment with the passed controller."""
+    observation, _ = env.reset()
+    actions = []
+    observations = [observation]
+
+    for _ in range(max_steps):
+        action = controller.act(observation)
+        observation, _, terminated, truncated, _ = env.step(action)
+
+        observations.append(observation)
+        actions.append(action)
+
+        # Check if we need to stop the simulation
+        if terminated or truncated:
+            frames = env.render()
+            env.reset()
+            break
+    env.close()
+
+    actions = np.stack(actions)
+    observations = np.stack(observations)
+
+    return EnvironmentSimulationResults(
+        frames=frames,
+        observations=observations,
+        actions=actions,
+    )
