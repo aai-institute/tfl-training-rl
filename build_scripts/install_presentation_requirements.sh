@@ -37,7 +37,6 @@ BUILD_DIR=$(dirname "$0")
 
 (
   cd "${BUILD_DIR}/.." || (echo "Unknown error, could not find directory ${BUILD_DIR}" && exit 255)
-  pip install "notebook<7" jupyter_contrib_nbextensions rise
   python build_scripts/configure_spellcheck_dict.py
   jupyter contrib nbextension install --user
   jupyter nbextensions_configurator enable --user
