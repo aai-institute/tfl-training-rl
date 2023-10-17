@@ -13,9 +13,11 @@ RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essent
 
 USER ${NB_UID}
 
+
 # Jhub does not support notebook 7 yet, all hell breaks loose if we don't pin it
 RUN pip install "notebook<7"
 # This goes directly into main jupyter, not poetry env
+COPY --chown=${NB_UID}:${NB_GID} build_scripts ./build_scripts
 RUN bash build_scripts/install_presentation_requirements.sh
 
 
