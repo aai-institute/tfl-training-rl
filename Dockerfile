@@ -13,6 +13,12 @@ RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essent
 
 USER ${NB_UID}
 
+# Jhub does not support notebook 7 yet, all hell breaks loose if we don't pin it
+RUN pip install "notebook<7"
+# This goes directly into main jupyter, not poetry env
+RUN bash build_scripts/install_presentation_requirements.sh
+
+
 # Install poetry according to
 # https://python-poetry.org/docs/#installing-manually
 RUN pip install -U setuptools "poetry==$POETRY_VERSION"
@@ -45,4 +51,3 @@ WORKDIR $CODE_DIR
 
 RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-interaction --no-ansi
-RUN PATH=$CODE_DIR/.venv/bin:$PATH bash build_scripts/install_presentation_requirements.sh

@@ -29,6 +29,7 @@ accsr = "^0.4.5"
 control = "^0.9.4"
 do-mpc = "^4.6.1"
 gymnasium = {extras = ["mujoco"], version = "^0.29.1"}
+ipykernel = "^6.25.2"
 ipywidgets = "^8.1.1"
 jupyter-contrib-nbextensions = "^0.7.0"
 matplotlib = "^3.8.0"
