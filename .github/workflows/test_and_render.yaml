@@ -29,19 +29,14 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git lfs pull
       - name: Install package
-        run: pip install -e .
+        run: poetry install
       - name: Run tests
-        run: pytest
+        run: poetry run pytest
       - name: Build docs
 #       NOTE: feel free to delete the if-else and just keep the else line. It's simply a special case to make the
 #       automatically generated thesan_output fully representative. In normal cases, the notebooks are rendered
 #       locally and html is committed
-        run: |
-          if [ $(basename "$PWD") = "thesan_output" ]; then 
-            bash build_scripts/build_docs.sh --execute
-          else
-            bash build_scripts/build_docs.sh --skip-nbconvert --skip-jupyter-book
-          fi
+        run: poetry run bash build_scripts/build_docs.sh --skip-nbconvert --skip-jupyter-book
       - name: Prepare Pages
         if: github.ref == 'refs/heads/master'
         run: mv docs/_build/html/* public/
