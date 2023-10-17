@@ -39,12 +39,17 @@ TODO: replace by real agenda
 |    1    | Third part                                        |  60 min  | 13:15 - 15:00 |
 |    1    | Coffee Break                                      |  15 min  | 15:00 - 15:15 |
 |    1    | Hold it...                                        |  45 min  | 15:15 - 17:00 |
-|    2    | A new day's topic                                 |  60 min  | 09:00 - 10:30 |
-|    2    | Coffee Break                                      |  15 min  | 10:30 - 10:45 |
-|    2    | Continued                                         |  90 min  | 10:45 - 12:15 |
-|    2    | Lunch Break                                       |  60 min  | 12:15 - 13:15 |
-|    2    | Third part                                        |  60 min  | 13:15 - 15:00 |
+|    2    | Introduction to Offline RL                        |  30 min  | 09:00 - 09:30 |
+|    2    | Overview of Open Source Offline RL Datasets       |  30 min  | 09:30 - 10:00 |
+|    2    | Coffee Break                                      |  15 min  | 10:00 - 10:15 |
+|    2    | Data Collection with Minari                       |  60 min  | 10:15 - 11:15 |
+|    2    | Offline RL Challenges - Part I                    |  60 min  | 11:15 - 12:15 |
+|    2    | Lunch                                             |  60 min  | 12:15 - 13:15 |
+|    2    | Offline RL Challenges - Part II                   |  60 min  | 13:15 - 14:15 |
+|    2    | Offline RL Approaches and Algorithms - Part I     |  45 min  | 14:15 - 15:00 |
 |    2    | Coffee Break                                      |  15 min  | 15:00 - 15:15 |
-|    2    | Last part                                         |  45 min  | 15:15 - 16:45 |
-|    2    | Concluding Remarks                                |  15 min  | 16:45 - 17:00 |
+|    2    | Offline RL Approaches and Algorithms - Part II    |  45 min  | 15:15 - 16:30 |
+|    2    | Concluding Remarks                                |  15 min  | 16:30 - 16:45 |
+|    2    | Fill Feedback Form                                |  15 min  | 16:45 - 17:00 |
+
 
