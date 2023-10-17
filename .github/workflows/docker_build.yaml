@@ -2,7 +2,7 @@ name: Build docker image with the presentation
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
     inputs:
       reason:
@@ -60,7 +60,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args:
-            PARTICIPANT_BUCKET_READ_SECRET=${{ secrets.PARTICIPANT_BUCKET_READ_SECRET }}
           cache-from: type=registry,ref=europe-west3-docker.pkg.dev/tfl-prod-ea3b/tfl-docker/tfl-training-rl:latest
           cache-to: type=inline

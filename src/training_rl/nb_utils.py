@@ -49,7 +49,7 @@ def set_random_seed(seed: int = 16) -> None:
 class TflWorkshopMagic(Magics):
     def __init__(self, shell, storage: RemoteStorage = None):
         super().__init__(shell)
-        self.storage = storage or default_remote_storage()
+        self.storage = storage
         self._c = get_config()
 
     @line_magic
@@ -70,6 +70,9 @@ class TflWorkshopMagic(Magics):
         """Defines the magic command %download_data <path> that will download the data from the remote storage.
         If no path is provided, it will download all data. The path should be relative to the data directory.
         """
+        if self.storage is None:
+            self.storage = default_remote_storage()
+
         base_data_rel_path = os.path.relpath(self._c.data, root_dir)
         # prepend the base data path to the path.
         # If path was empty, the separator is removed, resulting in the base path

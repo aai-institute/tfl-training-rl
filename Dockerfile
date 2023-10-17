@@ -1,18 +1,6 @@
 FROM jupyter/minimal-notebook:python-3.11
 
-# keep env var name in sync with config_local.yml
-ARG PARTICIPANT_BUCKET_READ_SECRET
-ENV PARTICIPANT_BUCKET_READ_SECRET=${PARTICIPANT_BUCKET_READ_SECRET}
 ENV POETRY_VERSION=1.6.1
-
-RUN if [ -z "$PARTICIPANT_BUCKET_READ_SECRET" ]; \
-      then echo "The build arg PARTICIPANT_BUCKET_READ_SECRET must be set to non-zero, e.g. \
-by passing the flag --build-arg PARTICIPANT_BUCKET_READ_SECRET=$PARTICIPANT_BUCKET_READ_SECRET. " &&\
-      echo "If running in CI, this variable should have been included as GH secret in the repository settings." &&\
-      echo "If you are building locally and the env var is not set,  \
-you might find the corresponding value inside config.yml under the 'secret' key." &&\
-      exit 1; \
-    fi
 
 USER root
 RUN apt-get update && apt-get upgrade -y
@@ -27,7 +15,7 @@ USER ${NB_UID}
 
 # Install poetry according to
 # https://python-poetry.org/docs/#installing-manually
-RUN pip install setuptools "poetry==$POETRY_VERSION"
+RUN pip install -U setuptools "poetry==$POETRY_VERSION"
 
 WORKDIR /tmp
 
