@@ -55,3 +55,6 @@ RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-interaction --no-ansi
 # DIRTY HACK
 RUN mv pyproject-full.toml pyproject.toml
+RUN pip install -U "notebook<7" ipykernel
+RUN python -m ipykernel install --user
+
