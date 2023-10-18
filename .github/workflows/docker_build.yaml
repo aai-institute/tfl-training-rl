@@ -2,7 +2,7 @@ name: Build docker image with the presentation
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
     inputs:
       reason:
@@ -24,16 +24,6 @@ jobs:
       # lfs=true is not enough, see https://stackoverflow.com/questions/61463578/github-actions-actions-checkoutv2-lfs-true-flag-not-converting-pointers-to-act
       - name: Pull LFS Objects
         run: git lfs pull
-      - name: validate notebooks
-        run: |
-          for notebook in notebooks/*.ipynb; do
-            if grep -q '# *%load ' "$notebook"; then
-              echo "$notebook contains an executed load statement. 
-          This is not allowed inside the docker image for participants, make sure you remove this
-          in a future commit."
-              exit 255
-            fi
-          done
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -60,7 +50,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args:
-            PARTICIPANT_BUCKET_READ_SECRET=${{ secrets.PARTICIPANT_BUCKET_READ_SECRET }}
           cache-from: type=registry,ref=europe-west3-docker.pkg.dev/tfl-prod-ea3b/tfl-docker/tfl-training-rl:latest
           cache-to: type=inline

@@ -11,9 +11,9 @@ if [ ! -d  "${ROOT_DIR}" ]; then
 fi
 
 cd "${ROOT_DIR}" || exit
-jupyter trust notebooks/*.ipynb
-pip install -e "."; echo "Installed training_rl" ; python scripts/download_data.py
 
+# use poetry for package mgmt.
+poetry run python -m ipykernel install --user --name "tfl-training-rl"
 
 
 # original entrypoint, see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile#L150

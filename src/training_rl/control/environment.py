@@ -1,31 +1,45 @@
 import importlib.resources
 import math
 import os
-from typing import ClassVar
+from dataclasses import dataclass
+from typing import ClassVar, Protocol
 
 import numpy as np
 from gymnasium import Env, utils
 from gymnasium.envs.mujoco import MujocoEnv
-from gymnasium.envs.mujoco.inverted_pendulum_v4 import InvertedPendulumEnv
+from gymnasium.envs.mujoco.inverted_pendulum_v4 import (
+    DEFAULT_CAMERA_CONFIG,
+    InvertedPendulumEnv,
+)
 from gymnasium.spaces import Box
 from gymnasium.wrappers import OrderEnforcing, PassiveEnvChecker, TimeLimit
 from gymnasium.wrappers.render_collection import RenderCollection
+from numpy.typing import NDArray
 
-__all__ = ["create_inverted_pendulum_environment", "create_mass_spring_damper_environment"]
+__all__ = [
+    "create_inverted_pendulum_environment",
+    "create_mass_spring_damper_environment",
+    "simulate_environment",
+]
 
 
-ASSETS_DIR = importlib.resources.files(__package__) / "assets"
+ASSETS_DIR = importlib.resources.files(__package__) / "../assets"
 
 
 def create_inverted_pendulum_environment(
     render_mode: str = "rgb_array",
     max_steps: int = 100,
     cutoff_angle: float = 0.8,
+    initial_angle: float = 0.0,
 ) -> Env:
     """Creates instance of InvertedPendulumEnvWithCutoffAngle with some wrappers
     to ensure correctness, limit the number of steps and store rendered frames.
     """
-    env = InvertedPendulumEnvWithCutoffAngle(cutoff_angle=cutoff_angle, render_mode=render_mode)
+    env = InvertedPendulumEnvWithInitialAndCutoffAngle(
+        cutoff_angle=cutoff_angle,
+        initial_angle=initial_angle,
+        render_mode=render_mode,
+    )
     env = PassiveEnvChecker(env)
     env = OrderEnforcing(env)
     env = TimeLimit(env, max_steps)
@@ -46,12 +60,24 @@ def create_mass_spring_damper_environment(
     return RenderCollection(env)
 
 
-class InvertedPendulumEnvWithCutoffAngle(InvertedPendulumEnv):
-    """Modified version of InvertedPendulumEnv that allows setting a different cutoff angle."""
+class InvertedPendulumEnvWithInitialAndCutoffAngle(InvertedPendulumEnv):
+    """Modified version of InvertedPendulumEnv that allows setting a different initial and cutoff angles."""
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         self.cutoff_angle = kwargs.pop("cutoff_angle", math.radians(45))
-        super().__init__(*args, **kwargs)
+        self.initial_angle = kwargs.pop("initial_angle", 0.0)
+        utils.EzPickle.__init__(self, **kwargs)
+        observation_space = Box(low=-np.inf, high=np.inf, shape=(4,), dtype=np.float64)
+        model_file = os.fspath(ASSETS_DIR / "inverted_pendulum.xml")
+        MujocoEnv.__init__(
+            self,
+            model_file,
+            2,
+            observation_space=observation_space,
+            default_camera_config=DEFAULT_CAMERA_CONFIG,
+            **kwargs,
+        )
+        self.init_qpos[1] = self.initial_angle
 
     def step(self, a):
         reward = 1.0
@@ -150,3 +176,50 @@ class MassSpringDamperEnv(MujocoEnv, utils.EzPickle):
 
     def _get_obs(self):
         return np.concatenate([self.data.qpos, self.data.qvel]).ravel()
+
+
+class FeedbackController(Protocol):
+    def act(self, observation: NDArray) -> NDArray:
+        ...
+
+
+@dataclass
+class EnvironmentSimulationResults:
+    frames: list[NDArray]
+    observations: NDArray
+    actions: NDArray
+
+
+def simulate_environment(
+    env: Env,
+    *,
+    controller: FeedbackController,
+    max_steps: int = 500,
+) -> EnvironmentSimulationResults:
+    """Simulates the passed environment with the passed controller."""
+    observation, _ = env.reset()
+    actions = []
+    observations = [observation]
+
+    for _ in range(max_steps):
+        action = controller.act(observation)
+        observation, _, terminated, truncated, _ = env.step(action)
+
+        observations.append(observation)
+        actions.append(action)
+
+        # Check if we need to stop the simulation
+        if terminated or truncated:
+            frames = env.render()
+            env.reset()
+            break
+    env.close()
+
+    actions = np.stack(actions)
+    observations = np.stack(observations)
+
+    return EnvironmentSimulationResults(
+        frames=frames,
+        observations=observations,
+        actions=actions,
+    )
