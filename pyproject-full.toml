@@ -26,11 +26,28 @@ include=["src/training_rl/assets"]
 [tool.poetry.dependencies]
 python = "^3.11"
 accsr = "^0.4.5"
+control = "^0.9.4"
+do-mpc = "^4.6.1"
+gymnasium = {extras = ["mujoco"], version = "^0.29.1"}
 ipykernel = "^6.25.2"
 ipywidgets = "^8.1.1"
 jupyter-contrib-nbextensions = "^0.7.0"
+matplotlib = "^3.8.0"
+matplotx = "^0.3.10"
+mediapy = "^1.1.9"
+networkx = "^3.1"
 notebook = "<7.0.0"
-
+numpy = "^1"
+packaging = "*"
+pandas = {extras = ["performance"], version = "^2.1.0"}
+rise = "^5.7.1"
+seaborn = "^0.13.0"
+slycot = "^0.5.4"
+tensorboard = "^2.5.0"
+# Torch 2.0.1 causes problems, see https://github.com/pytorch/pytorch/issues/100974
+torch = "^2.0.0, !=2.0.1, !=2.1.0"
+tqdm = "*"
+traitlets = "5.9.0"
 
 
 [tool.poetry.group.dev]
