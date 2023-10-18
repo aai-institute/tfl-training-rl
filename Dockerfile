@@ -54,4 +54,4 @@ WORKDIR $CODE_DIR
 RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-interaction --no-ansi
 # DIRTY HACK
-RUN mv poetry-full.toml poetry.toml
+RUN mv pyproject-full.toml pyproject.toml
