@@ -6,6 +6,7 @@ from training_rl.offline_rl.custom_envs.custom_2d_grid_env.simple_grid import \
     Custom2DGridEnv
 from training_rl.offline_rl.utils import one_hot_to_integer
 
+
 # MOVES:
 #   0: (-1, 0),  # UP
 #   1: (1, 0),  # DOWN
@@ -68,7 +69,7 @@ def behavior_policy_8x8_grid_deterministic_4_0_to_7_7(
     state: np.ndarray, env: Custom2DGridEnv
 ) -> int:
     """
-    Deterministic policy to move agent from (4,0) towards (7,7)
+    Deterministic suboptimal policy to move agent from (4,0) towards (7,7)
 
     :param state: Agent state
     :param env:
@@ -83,6 +84,36 @@ def behavior_policy_8x8_grid_deterministic_4_0_to_7_7(
         return 3
     else:
         return 1
+
+
+def behavior_policy_8x8_grid_epsilon_greedy_4_0_to_7_7(
+    state: np.ndarray, env: Custom2DGridEnv
+) -> int:
+    """
+    Deterministic suboptimal policy to move agent from (4,0) towards (7,7)
+
+    :param state: Agent state
+    :param env:
+    :return: The action
+    :rtype:
+    """
+
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    if state_xy == (4, 0):
+        action = 1
+    elif state_xy[0] == 5 and state_xy[1] < 7:
+        action = 3
+    else:
+        action = 1
+
+    epsilon = 0.5
+    if random.random() < epsilon:
+        possible_directions = [0, 1,3]
+        weights = [3, 3, 1]
+        action = random.choices(possible_directions, weights=weights)[0]
+
+    return action
 
 
 def behavior_policy_8x8_grid_random_towards_left_within_strip(
@@ -125,7 +156,7 @@ def behavior_policy_8x8_grid_avoid_vertical_obstacle(
     weights = [1, 1, 1, 1]
 
     if state_xy[0] < 4 and state_xy[1] < 4:
-        weights = [1, 4, 1, 2]
+        weights = [0, 1, 0, 0]
     if state_xy[0] >= 4:
         weights = [1, 1, 1, 2]
     if state_xy[0] >= 4 and state_xy[1] >= 4:
@@ -146,31 +177,44 @@ def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
     return random.choices(possible_directions, weights=weights)[0]
 
 
-def behavior_policy_8x8_grid_epsilon_greedy_4_0_to_7_7(
+'''
+def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+
+    possible_directions = [2, 3, 1]
+    weights = [1, 2, 1]
+
+    if state_xy[0] == 2:
+        possible_directions = [0, 2, 3]
+        weights = [2, 1, 2]
+    return random.choices(possible_directions, weights=weights)[0]
+'''
+
+
+def behavior_policy_8x8_grid_moves_downwards_within_strip_and_left(
     state: np.ndarray, env: Custom2DGridEnv
 ) -> int:
     """
-    Suboptimal policy to move agent from (4,0) towards (7,7) with noise
+    This policy moves the agent downward and left-right but with limited horizontal mobility,
+    constrained to the first three cells of the grid
 
     :param state: Agent state
     :param env:
     :return: The action
-    :rtype:
     """
-
     state_index = one_hot_to_integer(state)
     state_xy = env.to_xy(state_index)
-    if state_xy == (4, 0):
-        action = 1
-    elif state_xy[0] == 5 and state_xy[1] < 7:
-        action = 3
-    else:
-        action = 1
+    possible_directions = [2, 3, 1]
+    weights = [1, 1, 1]
+    random_directions = random.choices(possible_directions, weights=weights)[0]
 
-    epsilon = 0.5
-    if random.random() < epsilon:
-        possible_directions = [0, 1]
+    if state_xy[0] == 7:
+        return 3
+
+    if random_directions == 3 and (state_xy[1] > 2):
+        possible_directions = [2, 1]
         weights = [1, 1]
-        action = random.choices(possible_directions, weights=weights)[0]
+        return random.choices(possible_directions, weights=weights)[0]
 
-    return action
+    return random_directions
