@@ -50,7 +50,7 @@ def set_random_seed(seed: int = 16) -> None:
 
 @magics_class
 class TflWorkshopMagic(Magics):
-    def __init__(self, shell, storage: RemoteStorage = None):
+    def __init__(self, shell, storage: 'RemoteStorage' = None):
         super().__init__(shell)
         self.storage = storage
         self._c = get_config()
