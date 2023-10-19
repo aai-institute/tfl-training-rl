@@ -67,7 +67,7 @@ torch = "^2.0.0, !=2.0.1, !=2.1.0"
 tqdm = "*"
 h5py = "^3.9.0"
 docstring-parser = "^0.15"
-gymnasium = {extras = ["all"], version = "^0.28.0"}
+gymnasium = {extras = ["atari", "accept-rom-license", "classic-control", "mujoco"], version = "^0.28.0"}
 celluloid = "^0.2.0"
 
 

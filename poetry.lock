@@ -235,6 +235,43 @@ tests = ["attrs[tests-no-zope]", "zope-interface"]
 tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "pytest-xdist[psutil]"]
 
 [[package]]
+name = "autorom"
+version = "0.4.2"
+description = "Automated installation of Atari ROMs for Gym/ALE-Py"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "AutoROM-0.4.2-py3-none-any.whl", hash = "sha256:719c9d363ef08391fdb7003d70df235b68f36de628d289a946c4a59a3adefa13"},
+    {file = "AutoROM-0.4.2.tar.gz", hash = "sha256:b426a39bc0ee3781c7791f28963a9b2e4385b6421eeaf2f368edc00c761d428a"},
+]
+
+[package.dependencies]
+"AutoROM.accept-rom-license" = {version = "*", optional = true, markers = "extra == \"accept-rom-license\""}
+click = "*"
+requests = "*"
+tqdm = "*"
+
+[package.extras]
+accept-rom-license = ["AutoROM.accept-rom-license"]
+
+[[package]]
+name = "autorom-accept-rom-license"
+version = "0.6.1"
+description = "Automated installation of Atari ROMs for Gym/ALE-Py"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "AutoROM.accept-rom-license-0.6.1.tar.gz", hash = "sha256:0c905a708d634a076f686802f672817d3585259ce3be0bde8713a4fb59e3159e"},
+]
+
+[package.dependencies]
+click = "*"
+requests = "*"
+
+[package.extras]
+tests = ["ale_py", "multi_agent_ale_py"]
+
+[[package]]
 name = "babel"
 version = "2.13.0"
 description = "Internationalization utilities"
@@ -394,20 +431,6 @@ numpy = "*"
 
 [package.extras]
 doc = ["gitpython", "numpydoc", "sphinx"]
-
-[[package]]
-name = "box2d-py"
-version = "2.3.5"
-description = "Python Box2D"
-optional = false
-python-versions = "*"
-files = [
-    {file = "box2d-py-2.3.5.tar.gz", hash = "sha256:b37dc38844bcd7def48a97111d2b082e4f81cca3cece7460feb3eacda0da2207"},
-    {file = "box2d_py-2.3.5-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:287aa54005c0644b47bf7ad72966e4068d66e56bcf8458f5b4a653ffe42a2618"},
-    {file = "box2d_py-2.3.5-cp36-cp36m-macosx_10_13_x86_64.whl", hash = "sha256:483b3f9acd5d156b72bf2013f93cf7f8ca0ee1562e43d2353ab4c0cbec4ee49a"},
-    {file = "box2d_py-2.3.5-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:a294c2d7cc73cc05dd491287079e15419eb98caa3158df94f40faf85eeb4b6e9"},
-    {file = "box2d_py-2.3.5-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:0d46068eb8d29e366ed698ab2a4833d4d2d34ed035ebd6a685888007dda05f64"},
-]
 
 [[package]]
 name = "cachetools"
@@ -988,17 +1011,6 @@ docs = ["ipython", "matplotlib", "numpydoc", "sphinx"]
 tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
-name = "cython"
-version = "3.0.4"
-description = "The Cython compiler for writing C extensions in the Python language."
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-files = [
-    {file = "Cython-3.0.4-py2.py3-none-any.whl", hash = "sha256:e5e2859f97e9cceb8e70b0934c56157038b8b083245898593008162a70536d7e"},
-    {file = "Cython-3.0.4.tar.gz", hash = "sha256:2e379b491ee985d31e5faaf050f79f4a8f59f482835906efe4477b33b4fbe9ff"},
-]
-
-[[package]]
 name = "debugpy"
 version = "1.8.0"
 description = "An implementation of the Debug Adapter Protocol for Python"
@@ -1160,17 +1172,6 @@ python-versions = "*"
 files = [
     {file = "Farama-Notifications-0.0.4.tar.gz", hash = "sha256:13fceff2d14314cf80703c8266462ebf3733c7d165336eee998fc58e545efd18"},
     {file = "Farama_Notifications-0.0.4-py3-none-any.whl", hash = "sha256:14de931035a41961f7c056361dc7f980762a143d05791ef5794a751a2caf05ae"},
-]
-
-[[package]]
-name = "fasteners"
-version = "0.19"
-description = "A python package that provides useful locks"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "fasteners-0.19-py3-none-any.whl", hash = "sha256:758819cb5d94cdedf4e836988b74de396ceacb8e2794d21f82d131fd9ee77237"},
-    {file = "fasteners-0.19.tar.gz", hash = "sha256:b4f37c3ac52d8a445af3a66bce57b33b5e90b97c696b7b984f530cf8f0ded09c"},
 ]
 
 [[package]]
@@ -1454,24 +1455,15 @@ files = [
 ]
 
 [package.dependencies]
-box2d-py = {version = "2.3.5", optional = true, markers = "extra == \"all\""}
+autorom = {version = ">=0.4.2,<0.5.0", extras = ["accept-rom-license"], optional = true, markers = "extra == \"accept-rom-license\""}
 cloudpickle = ">=1.2.0"
 farama-notifications = ">=0.0.1"
-imageio = {version = ">=2.14.1", optional = true, markers = "extra == \"all\""}
-jax = {version = "0.3.24", optional = true, markers = "extra == \"all\""}
+imageio = {version = ">=2.14.1", optional = true, markers = "extra == \"mujoco\""}
 jax-jumpy = ">=1.0.0"
-jaxlib = {version = "0.3.24", optional = true, markers = "extra == \"all\""}
-lz4 = {version = ">=3.1.0", optional = true, markers = "extra == \"all\""}
-matplotlib = {version = ">=3.0", optional = true, markers = "extra == \"all\""}
-moviepy = {version = ">=1.0.0", optional = true, markers = "extra == \"all\""}
-mujoco = {version = ">=2.3.2", optional = true, markers = "extra == \"all\""}
-mujoco-py = {version = ">=2.1,<2.2", optional = true, markers = "extra == \"all\""}
+mujoco = {version = ">=2.3.2", optional = true, markers = "extra == \"mujoco\""}
 numpy = ">=1.21.0"
-opencv-python = {version = ">=3.0", optional = true, markers = "extra == \"all\""}
-pygame = {version = "2.1.3", optional = true, markers = "extra == \"all\""}
-shimmy = {version = ">=0.1.0,<1.0", extras = ["atari"], optional = true, markers = "extra == \"all\""}
-swig = {version = "==4.*", optional = true, markers = "extra == \"all\""}
-torch = {version = ">=1.0.0", optional = true, markers = "extra == \"all\""}
+pygame = {version = "2.1.3", optional = true, markers = "extra == \"classic-control\" or extra == \"classic_control\""}
+shimmy = {version = ">=0.1.0,<1.0", extras = ["atari"], optional = true, markers = "extra == \"atari\""}
 typing-extensions = ">=4.3.0"
 
 [package.extras]
@@ -1579,24 +1571,6 @@ linting = ["black", "flake8"]
 pyav = ["av"]
 test = ["fsspec[github]", "pytest", "pytest-cov"]
 tifffile = ["tifffile"]
-
-[[package]]
-name = "imageio-ffmpeg"
-version = "0.4.9"
-description = "FFMPEG wrapper for Python"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "imageio-ffmpeg-0.4.9.tar.gz", hash = "sha256:39bcd1660118ef360fa4047456501071364661aa9d9021d3d26c58f1ee2081f5"},
-    {file = "imageio_ffmpeg-0.4.9-py3-none-macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:24095e882a126a0d217197b86265f821b4bb3cf9004104f67c1384a2b4b49168"},
-    {file = "imageio_ffmpeg-0.4.9-py3-none-manylinux2010_x86_64.whl", hash = "sha256:2996c64af3e5489227096580269317719ea1a8121d207f2e28d6c24ebc4a253e"},
-    {file = "imageio_ffmpeg-0.4.9-py3-none-manylinux2014_aarch64.whl", hash = "sha256:7eead662d2f46d748c0ab446b68f423eb63d2b54d0a8ef96f80607245540866d"},
-    {file = "imageio_ffmpeg-0.4.9-py3-none-win32.whl", hash = "sha256:b6de1e18911687c538d5585d8287ab1a23624ca9dc2044fcc4607de667bcf11e"},
-    {file = "imageio_ffmpeg-0.4.9-py3-none-win_amd64.whl", hash = "sha256:7e900c695c6541b1cb17feb1baacd4009b30a53a45b81c23d53a67ab13ffb766"},
-]
-
-[package.dependencies]
-setuptools = "*"
 
 [[package]]
 name = "imagesize"
@@ -1753,32 +1727,6 @@ files = [
 arrow = ">=0.15.0"
 
 [[package]]
-name = "jax"
-version = "0.3.24"
-description = "Differentiate, compile, and transform Numpy code."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "jax-0.3.24.tar.gz", hash = "sha256:54c0002926a1898e7c7afdc2a14fbdcac04188bcaa359bc3389a30ea464a513a"},
-]
-
-[package.dependencies]
-numpy = ">=1.20"
-opt_einsum = "*"
-scipy = ">=1.5"
-typing_extensions = "*"
-
-[package.extras]
-australis = ["protobuf (>=3.13,<4)"]
-ci = ["jaxlib (==0.3.22)"]
-cpu = ["jaxlib (==0.3.24)"]
-cuda = ["jaxlib (==0.3.24+cuda11.cudnn82)"]
-cuda11-cudnn805 = ["jaxlib (==0.3.24+cuda11.cudnn805)"]
-cuda11-cudnn82 = ["jaxlib (==0.3.24+cuda11.cudnn82)"]
-minimum-jaxlib = ["jaxlib (==0.3.22)"]
-tpu = ["jaxlib (==0.3.24)", "libtpu-nightly (==0.1.dev20221103)", "requests"]
-
-[[package]]
 name = "jax-jumpy"
 version = "1.0.0"
 description = "Common backend for Jax or Numpy."
@@ -1795,33 +1743,6 @@ numpy = ">=1.18.0"
 [package.extras]
 jax = ["jax (>=0.3.24)", "jaxlib (>=0.3.24)"]
 testing = ["pytest (==7.1.3)"]
-
-[[package]]
-name = "jaxlib"
-version = "0.3.24"
-description = "XLA library for JAX"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "jaxlib-0.3.24-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:c73e0716f3c473b8f5a17a239d27771e8de2b745b29cbb2467fb6a5815affe45"},
-    {file = "jaxlib-0.3.24-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:ac9f1df0b097e4540df1aeefb4cf241be1e413194d69837a852adc79239a728f"},
-    {file = "jaxlib-0.3.24-cp310-cp310-manylinux2014_x86_64.whl", hash = "sha256:ac17008698a7fd603cb8a39299ebf0559f6cec3c9f64b0020d33f5d539075559"},
-    {file = "jaxlib-0.3.24-cp311-cp311-macosx_10_14_x86_64.whl", hash = "sha256:f4c8f52dd222cf54dfecb4616b72b162e296e12341b58d86f61631f6aac65de5"},
-    {file = "jaxlib-0.3.24-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:0d3c979e40dc6c1b7831504cc277e4a40d3f62f2ef11f363009dbb19a8450de5"},
-    {file = "jaxlib-0.3.24-cp311-cp311-manylinux2014_x86_64.whl", hash = "sha256:62df5c7d666d960e43f4f455e49e8d13fd77d9f298abc8ec59c12a78844b2d0e"},
-    {file = "jaxlib-0.3.24-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:fe664cac2786f377a88b17da4e2b0cb060c7066db49ada4596aa8024543170d8"},
-    {file = "jaxlib-0.3.24-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:09d940e1e95fed8a927e7f59d9f4bfff78242ade1cc1aad5a203181bc9eead05"},
-    {file = "jaxlib-0.3.24-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:f8ee0fc1f6abfc9285d323a06d791ae4b2bedc89e38d49dc1a1c4fa06f40732b"},
-    {file = "jaxlib-0.3.24-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:dd1406d9553ce5c8c868afd0a07e76a6ddbb965e5846eeaf960438a395fa88d0"},
-    {file = "jaxlib-0.3.24-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:ba1bf3766c1cc33dd5fc08d0468980c2fa42c26f5ad08f369fbf3e74dd5c24cb"},
-    {file = "jaxlib-0.3.24-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:7eab08c684473d3141c271250c83c8534e6d1460b34e334998846bfb4f5c3c66"},
-    {file = "jaxlib-0.3.24-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:cee54f5cdfcf4a60c42f775ff59dc2a97cb2660db943b9b05865c093753da4a2"},
-    {file = "jaxlib-0.3.24-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:75ab498c064cdea988a0a85209557edd0359c722bb886bd1426e57e8529a083e"},
-]
-
-[package.dependencies]
-numpy = ">=1.20"
-scipy = ">=1.5"
 
 [[package]]
 name = "jedi"
@@ -2489,55 +2410,6 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=0.29.35)"]
 
 [[package]]
-name = "lz4"
-version = "4.3.2"
-description = "LZ4 Bindings for Python"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "lz4-4.3.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:1c4c100d99eed7c08d4e8852dd11e7d1ec47a3340f49e3a96f8dfbba17ffb300"},
-    {file = "lz4-4.3.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:edd8987d8415b5dad25e797043936d91535017237f72fa456601be1479386c92"},
-    {file = "lz4-4.3.2-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f7c50542b4ddceb74ab4f8b3435327a0861f06257ca501d59067a6a482535a77"},
-    {file = "lz4-4.3.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0f5614d8229b33d4a97cb527db2a1ac81308c6e796e7bdb5d1309127289f69d5"},
-    {file = "lz4-4.3.2-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:8f00a9ba98f6364cadda366ae6469b7b3568c0cced27e16a47ddf6b774169270"},
-    {file = "lz4-4.3.2-cp310-cp310-win32.whl", hash = "sha256:b10b77dc2e6b1daa2f11e241141ab8285c42b4ed13a8642495620416279cc5b2"},
-    {file = "lz4-4.3.2-cp310-cp310-win_amd64.whl", hash = "sha256:86480f14a188c37cb1416cdabacfb4e42f7a5eab20a737dac9c4b1c227f3b822"},
-    {file = "lz4-4.3.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:7c2df117def1589fba1327dceee51c5c2176a2b5a7040b45e84185ce0c08b6a3"},
-    {file = "lz4-4.3.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:1f25eb322eeb24068bb7647cae2b0732b71e5c639e4e4026db57618dcd8279f0"},
-    {file = "lz4-4.3.2-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8df16c9a2377bdc01e01e6de5a6e4bbc66ddf007a6b045688e285d7d9d61d1c9"},
-    {file = "lz4-4.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f571eab7fec554d3b1db0d666bdc2ad85c81f4b8cb08906c4c59a8cad75e6e22"},
-    {file = "lz4-4.3.2-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:7211dc8f636ca625abc3d4fb9ab74e5444b92df4f8d58ec83c8868a2b0ff643d"},
-    {file = "lz4-4.3.2-cp311-cp311-win32.whl", hash = "sha256:867664d9ca9bdfce840ac96d46cd8838c9ae891e859eb98ce82fcdf0e103a947"},
-    {file = "lz4-4.3.2-cp311-cp311-win_amd64.whl", hash = "sha256:a6a46889325fd60b8a6b62ffc61588ec500a1883db32cddee9903edfba0b7584"},
-    {file = "lz4-4.3.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:3a85b430138882f82f354135b98c320dafb96fc8fe4656573d95ab05de9eb092"},
-    {file = "lz4-4.3.2-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:65d5c93f8badacfa0456b660285e394e65023ef8071142e0dcbd4762166e1be0"},
-    {file = "lz4-4.3.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6b50f096a6a25f3b2edca05aa626ce39979d63c3b160687c8c6d50ac3943d0ba"},
-    {file = "lz4-4.3.2-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:200d05777d61ba1ff8d29cb51c534a162ea0b4fe6d3c28be3571a0a48ff36080"},
-    {file = "lz4-4.3.2-cp37-cp37m-win32.whl", hash = "sha256:edc2fb3463d5d9338ccf13eb512aab61937be50aa70734bcf873f2f493801d3b"},
-    {file = "lz4-4.3.2-cp37-cp37m-win_amd64.whl", hash = "sha256:83acfacab3a1a7ab9694333bcb7950fbeb0be21660d236fd09c8337a50817897"},
-    {file = "lz4-4.3.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:7a9eec24ec7d8c99aab54de91b4a5a149559ed5b3097cf30249b665689b3d402"},
-    {file = "lz4-4.3.2-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:31d72731c4ac6ebdce57cd9a5cabe0aecba229c4f31ba3e2c64ae52eee3fdb1c"},
-    {file = "lz4-4.3.2-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:83903fe6db92db0be101acedc677aa41a490b561567fe1b3fe68695b2110326c"},
-    {file = "lz4-4.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:926b26db87ec8822cf1870efc3d04d06062730ec3279bbbd33ba47a6c0a5c673"},
-    {file = "lz4-4.3.2-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:e05afefc4529e97c08e65ef92432e5f5225c0bb21ad89dee1e06a882f91d7f5e"},
-    {file = "lz4-4.3.2-cp38-cp38-win32.whl", hash = "sha256:ad38dc6a7eea6f6b8b642aaa0683253288b0460b70cab3216838747163fb774d"},
-    {file = "lz4-4.3.2-cp38-cp38-win_amd64.whl", hash = "sha256:7e2dc1bd88b60fa09b9b37f08553f45dc2b770c52a5996ea52b2b40f25445676"},
-    {file = "lz4-4.3.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:edda4fb109439b7f3f58ed6bede59694bc631c4b69c041112b1b7dc727fffb23"},
-    {file = "lz4-4.3.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:0ca83a623c449295bafad745dcd399cea4c55b16b13ed8cfea30963b004016c9"},
-    {file = "lz4-4.3.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d5ea0e788dc7e2311989b78cae7accf75a580827b4d96bbaf06c7e5a03989bd5"},
-    {file = "lz4-4.3.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a98b61e504fb69f99117b188e60b71e3c94469295571492a6468c1acd63c37ba"},
-    {file = "lz4-4.3.2-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:4931ab28a0d1c133104613e74eec1b8bb1f52403faabe4f47f93008785c0b929"},
-    {file = "lz4-4.3.2-cp39-cp39-win32.whl", hash = "sha256:ec6755cacf83f0c5588d28abb40a1ac1643f2ff2115481089264c7630236618a"},
-    {file = "lz4-4.3.2-cp39-cp39-win_amd64.whl", hash = "sha256:4caedeb19e3ede6c7a178968b800f910db6503cb4cb1e9cc9221157572139b49"},
-    {file = "lz4-4.3.2.tar.gz", hash = "sha256:e1431d84a9cfb23e6773e72078ce8e65cad6745816d4cbf9ae67da5ea419acda"},
-]
-
-[package.extras]
-docs = ["sphinx (>=1.6.0)", "sphinx-bootstrap-theme"]
-flake8 = ["flake8"]
-tests = ["psutil", "pytest (!=3.3.0)", "pytest-cov"]
-
-[[package]]
 name = "markdown"
 version = "3.5"
 description = "Python implementation of John Gruber's Markdown."
@@ -2726,30 +2598,6 @@ files = [
 ]
 
 [[package]]
-name = "moviepy"
-version = "1.0.3"
-description = "Video editing with Python"
-optional = false
-python-versions = "*"
-files = [
-    {file = "moviepy-1.0.3.tar.gz", hash = "sha256:2884e35d1788077db3ff89e763c5ba7bfddbd7ae9108c9bc809e7ba58fa433f5"},
-]
-
-[package.dependencies]
-decorator = ">=4.0.2,<5.0"
-imageio = {version = ">=2.5,<3.0", markers = "python_version >= \"3.4\""}
-imageio_ffmpeg = {version = ">=0.2.0", markers = "python_version >= \"3.4\""}
-numpy = {version = ">=1.17.3", markers = "python_version > \"2.7\""}
-proglog = "<=1.0.0"
-requests = ">=2.8.1,<3.0"
-tqdm = ">=4.11.2,<5.0"
-
-[package.extras]
-doc = ["Sphinx (>=1.5.2,<2.0)", "numpydoc (>=0.6.0,<1.0)", "pygame (>=1.9.3,<2.0)", "sphinx_rtd_theme (>=0.1.10b0,<1.0)"]
-optional = ["matplotlib (>=2.0.0,<3.0)", "opencv-python (>=3.0,<4.0)", "scikit-image (>=0.13.0,<1.0)", "scikit-learn", "scipy (>=0.19.0,<1.5)", "youtube_dl"]
-test = ["coverage (<5.0)", "coveralls (>=1.1,<2.0)", "pytest (>=3.0.0,<4.0)", "pytest-cov (>=2.5.1,<3.0)", "requests (>=2.8.1,<3.0)"]
-
-[[package]]
 name = "mpmath"
 version = "1.3.0"
 description = "Python library for arbitrary-precision floating-point arithmetic"
@@ -2807,25 +2655,6 @@ etils = {version = "*", extras = ["epath"]}
 glfw = "*"
 numpy = "*"
 pyopengl = "*"
-
-[[package]]
-name = "mujoco-py"
-version = "2.1.2.14"
-description = ""
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "mujoco-py-2.1.2.14.tar.gz", hash = "sha256:eb5b14485acf80a3cf8c15f4b080c6a28a9f79e68869aa696d16cbd51ea7706f"},
-    {file = "mujoco_py-2.1.2.14-py3-none-any.whl", hash = "sha256:37c0b41bc0153a8a0eb3663103a67c60f65467753f74e4ff6e68b879f3e3a71f"},
-]
-
-[package.dependencies]
-cffi = ">=1.10"
-Cython = ">=0.27.2"
-fasteners = ">=0.15,<1.0"
-glfw = ">=1.4.0"
-imageio = ">=2.1.2"
-numpy = ">=1.11"
 
 [[package]]
 name = "mypy"
@@ -3382,43 +3211,6 @@ signals = ["blinker (>=1.4.0)"]
 signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
-name = "opencv-python"
-version = "4.8.1.78"
-description = "Wrapper package for OpenCV python bindings."
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "opencv-python-4.8.1.78.tar.gz", hash = "sha256:cc7adbbcd1112877a39274106cb2752e04984bc01a031162952e97450d6117f6"},
-    {file = "opencv_python-4.8.1.78-cp37-abi3-macosx_10_16_x86_64.whl", hash = "sha256:91d5f6f5209dc2635d496f6b8ca6573ecdad051a09e6b5de4c399b8e673c60da"},
-    {file = "opencv_python-4.8.1.78-cp37-abi3-macosx_11_0_arm64.whl", hash = "sha256:bc31f47e05447da8b3089faa0a07ffe80e114c91ce0b171e6424f9badbd1c5cd"},
-    {file = "opencv_python-4.8.1.78-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9814beca408d3a0eca1bae7e3e5be68b07c17ecceb392b94170881216e09b319"},
-    {file = "opencv_python-4.8.1.78-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c4c406bdb41eb21ea51b4e90dfbc989c002786c3f601c236a99c59a54670a394"},
-    {file = "opencv_python-4.8.1.78-cp37-abi3-win32.whl", hash = "sha256:a7aac3900fbacf55b551e7b53626c3dad4c71ce85643645c43e91fcb19045e47"},
-    {file = "opencv_python-4.8.1.78-cp37-abi3-win_amd64.whl", hash = "sha256:b983197f97cfa6fcb74e1da1802c7497a6f94ed561aba6980f1f33123f904956"},
-]
-
-[package.dependencies]
-numpy = {version = ">=1.23.5", markers = "python_version >= \"3.11\""}
-
-[[package]]
-name = "opt-einsum"
-version = "3.3.0"
-description = "Optimizing numpys einsum function"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "opt_einsum-3.3.0-py3-none-any.whl", hash = "sha256:2455e59e3947d3c275477df7f5205b30635e266fe6dc300e3d9f9646bfcea147"},
-    {file = "opt_einsum-3.3.0.tar.gz", hash = "sha256:59f6475f77bbc37dcf7cd748519c0ec60722e91e63ca114e68821c0c54a46549"},
-]
-
-[package.dependencies]
-numpy = ">=1.7"
-
-[package.extras]
-docs = ["numpydoc", "sphinx (==1.2.3)", "sphinx-rtd-theme", "sphinxcontrib-napoleon"]
-tests = ["pytest", "pytest-cov", "pytest-pep8"]
-
-[[package]]
 name = "overrides"
 version = "7.4.0"
 description = "A decorator to automatically detect mismatch when overriding a method."
@@ -3788,20 +3580,6 @@ identify = ">=1.0.0"
 nodeenv = ">=0.11.1"
 pyyaml = ">=5.1"
 virtualenv = ">=20.10.0"
-
-[[package]]
-name = "proglog"
-version = "0.1.10"
-description = "Log and progress bar manager for console, notebooks, web..."
-optional = false
-python-versions = "*"
-files = [
-    {file = "proglog-0.1.10-py3-none-any.whl", hash = "sha256:19d5da037e8c813da480b741e3fa71fb1ac0a5b02bf21c41577c7f327485ec50"},
-    {file = "proglog-0.1.10.tar.gz", hash = "sha256:658c28c9c82e4caeb2f25f488fff9ceace22f8d69b15d0c1c86d64275e4ddab4"},
-]
-
-[package.dependencies]
-tqdm = "*"
 
 [[package]]
 name = "prometheus-client"
@@ -5064,31 +4842,6 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
-name = "swig"
-version = "4.1.1"
-description = "SWIG is a software development tool that connects programs written in C and C++ with a variety of high-level programming languages."
-optional = false
-python-versions = "*"
-files = [
-    {file = "swig-4.1.1-py2.py3-none-macosx_10_9_universal2.whl", hash = "sha256:42c6c203dba1c1afa60c8e3c6a4da7f39ce95a44bf0bf5b0f5cb16aa6caa51fe"},
-    {file = "swig-4.1.1-py2.py3-none-macosx_10_9_x86_64.whl", hash = "sha256:fe9b0a49190c484816a5ad020a88fa35b42628fb6c5f3d4a6f3da5f3bb70b31a"},
-    {file = "swig-4.1.1-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:cee47d9f21bc34fcc0bcb529795313041e589bf4b69fc7bffa1ef325dae0972f"},
-    {file = "swig-4.1.1-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6eb403545dbe2e16a612abc7cfce5e29da2ef9b2e81944fb7669fdd3a22810f4"},
-    {file = "swig-4.1.1-py2.py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d0bb43aecb5043be8cabd94e391b7c4eed2b900e2183b86be4f9d37da13dc43e"},
-    {file = "swig-4.1.1-py2.py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:9ff3aa551c42aee4170d42667b11f55bdd2ec43532717b03e6a10b97604b438c"},
-    {file = "swig-4.1.1-py2.py3-none-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:e669f7d82e34a866aef1c7d7c2e9d05c5dad033fd7094c02898a85d1bc5905d7"},
-    {file = "swig-4.1.1-py2.py3-none-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:3f9da5564718bb81234dd497dc265025b0456c6c9378dfa8206cda56a7fa65ba"},
-    {file = "swig-4.1.1-py2.py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:326a1e68dc5531f1ccb16d314d33afb8c964294d14111912ef069e90573c0b2a"},
-    {file = "swig-4.1.1-py2.py3-none-musllinux_1_1_i686.whl", hash = "sha256:1f8d43e6b29d6024374c4bcafa88cb5149f3e335d13db2556829d94dad1178eb"},
-    {file = "swig-4.1.1-py2.py3-none-musllinux_1_1_ppc64le.whl", hash = "sha256:c51a5d9d6791151a42bcf5524ab33ace6c206d8fa874f75961e91649ba5adb16"},
-    {file = "swig-4.1.1-py2.py3-none-musllinux_1_1_s390x.whl", hash = "sha256:32f91c83ed5cb09b80ef35c38aedbb80bd495d18716e6ca7ff2f9ec1f39ad8bc"},
-    {file = "swig-4.1.1-py2.py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:5df85ef91652d928fa2c45c4956def2ae3beae0957013c559152bb0da6643f4b"},
-    {file = "swig-4.1.1-py2.py3-none-win32.whl", hash = "sha256:bc753a7417a0a232fc34add810d7e46e1c78f49342f704a1a38a5ac920de6ca0"},
-    {file = "swig-4.1.1-py2.py3-none-win_amd64.whl", hash = "sha256:20a00158ddea0c11ce3535f5b9ddd808acdeb4918c89884fba6a697a0e21c33f"},
-    {file = "swig-4.1.1.tar.gz", hash = "sha256:7507e9ccd394a84dc080896277f72fda8393fa122e2e194f47f32fbf3a4cd564"},
-]
-
-[[package]]
 name = "sympy"
 version = "1.12"
 description = "Computer algebra system (CAS) in Python"
@@ -5556,4 +5309,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6d1fc344f2fd58fe1654474b327c6f6558677ca105500eb1d14316f7f6346892"
+content-hash = "b4f9270de8e72c4031e704ef067f6101a002cce2cb30aad2866ecd18a972959e"
