@@ -1,7 +1,6 @@
 import os
 import random
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -9,11 +8,7 @@ from IPython.core.magic import Magics, line_magic, magics_class
 from IPython.display import HTML, Markdown, display
 from itertools import zip_longest
 
-from .config import default_remote_storage, get_config, root_dir
 from .constants import LATEX_MACROS
-
-if TYPE_CHECKING:
-    from accsr.remote_storage import RemoteStorage
 
 __all__ = ["set_random_seed", "TflWorkshopMagic", "display_dataframes_side_by_side"]
 
@@ -50,10 +45,8 @@ def set_random_seed(seed: int = 16) -> None:
 
 @magics_class
 class TflWorkshopMagic(Magics):
-    def __init__(self, shell, storage: 'RemoteStorage' = None):
+    def __init__(self, shell):
         super().__init__(shell)
-        self.storage = storage
-        self._c = get_config()
 
     @line_magic
     def set_random_seed(self, seed: str):
@@ -67,20 +60,6 @@ class TflWorkshopMagic(Magics):
     @line_magic
     def view_hint(self, path: os.PathLike):
         display(Markdown(path))
-
-    @line_magic
-    def download_data(self, path: str):
-        """Defines the magic command %download_data <path> that will download the data from the remote storage.
-        If no path is provided, it will download all data. The path should be relative to the data directory.
-        """
-        if self.storage is None:
-            self.storage = default_remote_storage()
-
-        base_data_rel_path = os.path.relpath(self._c.data, root_dir)
-        # prepend the base data path to the path.
-        # If path was empty, the separator is removed, resulting in the base path
-        path = os.path.join(base_data_rel_path, path).rstrip(os.sep)
-        self.storage.pull(path, local_base_dir=root_dir)
 
     @line_magic
     def presentation_style(self, style_file: str):

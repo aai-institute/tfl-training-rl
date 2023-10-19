@@ -34,6 +34,7 @@ notebook = "<7.0.0"
 [tool.poetry.group.add1]
 optional = true
 [tool.poetry.group.add1.dependencies]
+pettingzoo = "^1.24.1"
 ipykernel = "^6.25.2"
 ipywidgets = "^8.1.1"
 jsonargparse = "^4.25.0"
@@ -43,14 +44,14 @@ matplotlib = "^3.8.0"
 matplotx = "^0.3.10"
 networkx = "^3.1"
 notebook = "<7.0.0"
+numba = "^0.57.1"
 # b/c of numba
 numpy = "<=1.24"
+overrides = "^7.4.0"
 packaging = "*"
 pandas = {extras = ["performance"], version = "^2.1.0"}
 seaborn = "^0.13.0"
 traitlets = "5.9.0"
-numba = "^0.57.1"
-overrides = "^7.4.0"
 virtualenv = [
  # special sauce b/c of a flaky bug in poetry on windows
  # see https://github.com/python-poetry/poetry/issues/7611#issuecomment-1466478926
@@ -61,23 +62,23 @@ virtualenv = [
 [tool.poetry.group.add2]
 optional = true
 [tool.poetry.group.add2.dependencies]
+celluloid = "^0.2.0"
+docstring-parser = "^0.15"
+gymnasium = {extras = ["atari", "accept-rom-license", "classic-control", "mujoco"], version = "^0.28.0"}
+h5py = "^3.9.0"
 tensorboard = "^2.5.0"
 # Torch 2.0.1 causes problems, see https://github.com/pytorch/pytorch/issues/100974
 torch = "^2.0.0, !=2.0.1, !=2.1.0"
 tqdm = "*"
-h5py = "^3.9.0"
-docstring-parser = "^0.15"
-gymnasium = {extras = ["atari", "accept-rom-license", "classic-control", "mujoco"], version = "^0.28.0"}
-celluloid = "^0.2.0"
 
 
 [tool.poetry.group.control]
 optional = true
 [tool.poetry.group.control.dependencies]
-slycot = "^0.5.4"
-mediapy = "^1.1.9"
 control = "^0.9.4"
 do-mpc = "^4.6.1"
+mediapy = "^1.1.9"
+slycot = "^0.5.4"
 
 
 [tool.poetry.group.dev]
