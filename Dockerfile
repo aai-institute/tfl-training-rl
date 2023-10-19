@@ -57,6 +57,7 @@ RUN poetry install --no-interaction --no-ansi
 RUN poetry install --no-interaction --no-ansi --with add1
 RUN poetry install --no-interaction --no-ansi --with add2
 RUN poetry install --no-interaction --no-ansi --with control
+RUN poetry install --no-interaction --no-ansi --with offline
 # use poetry for package mgmt.
 RUN poetry run ipython kernel install --name "tfl-training-rl" --user
 # DIRTY HACK

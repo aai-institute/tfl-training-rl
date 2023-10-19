@@ -25,11 +25,16 @@ include=["src/training_rl/assets"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-accsr = "^0.4.5"
+#accsr = "^0.4.5"
 ipykernel = "^6.25.2"
 ipywidgets = "^8.1.1"
 jupyter-contrib-nbextensions = "^0.7.0"
 notebook = "<7.0.0"
+
+[tool.poetry.group.offline]
+optional = true
+[tool.poetry.group.offline.dependencies]
+minari = "^0.4.2"
 
 [tool.poetry.group.add1]
 optional = true
