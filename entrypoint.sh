@@ -12,9 +12,6 @@ fi
 
 cd "${ROOT_DIR}" || exit
 
-# use poetry for package mgmt.
-poetry run python -m ipykernel install --user --name "tfl-training-rl"
-
 
 # original entrypoint, see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile#L150
 # need -s option for tini to work properly when started not as PID 1

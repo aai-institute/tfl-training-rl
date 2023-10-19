@@ -10,7 +10,7 @@ RUN apt-get update && apt-get upgrade -y
 # gcc, gfortran and libopenblas-dev are needed for slycot, which in turn is needed by the python-control package
 # build-essential required for scikit-build
 # opengl and ffmpeg needed for rendering envs
-RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential gcc gfortran libopenblas-dev
+RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential gcc gfortran libopenblas-dev ffmpeg
 
 USER ${NB_UID}
 
@@ -54,8 +54,10 @@ WORKDIR $CODE_DIR
 
 RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-ansi --with add1
+RUN poetry install --no-interaction --no-ansi --with add2
+RUN poetry install --no-interaction --no-ansi --with control
+# use poetry for package mgmt.
+RUN poetry run ipykernel install --user --name "tfl-training-rl"
 # DIRTY HACK
-RUN mv pyproject-full.toml pyproject.toml
 RUN pip install -U "notebook<7" ipykernel
-RUN python -m ipykernel install --user
-

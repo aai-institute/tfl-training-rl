@@ -1,16 +1,19 @@
 import os
 import random
 from collections.abc import Sequence
-from itertools import zip_longest
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-from accsr.remote_storage import RemoteStorage
 from IPython.core.magic import Magics, line_magic, magics_class
 from IPython.display import HTML, Markdown, display
+from itertools import zip_longest
 
 from .config import default_remote_storage, get_config, root_dir
 from .constants import LATEX_MACROS
+
+if TYPE_CHECKING:
+    from accsr.remote_storage import RemoteStorage
 
 __all__ = ["set_random_seed", "TflWorkshopMagic", "display_dataframes_side_by_side"]
 
