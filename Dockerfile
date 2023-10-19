@@ -58,6 +58,6 @@ RUN poetry install --no-interaction --no-ansi --with add1
 RUN poetry install --no-interaction --no-ansi --with add2
 RUN poetry install --no-interaction --no-ansi --with control
 # use poetry for package mgmt.
-RUN poetry run ipykernel install --user --name "tfl-training-rl"
+RUN poetry run ipython kernel install --name "tfl-training-rl" --user
 # DIRTY HACK
 RUN pip install -U "notebook<7" ipykernel
