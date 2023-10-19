@@ -10,8 +10,7 @@ from jupyter_core.paths import jupyter_data_dir
 from notebook.services.config import ConfigManager
 
 remote_base_url = (
-    "https://chromium.googlesource.com/"
-    + "chromium/deps/hunspell_dictionaries/+/refs/heads/main"
+    "https://chromium.googlesource.com/" + "chromium/deps/hunspell_dictionaries/+/refs/heads/main"
 )
 local_base_url = os.path.join(
     jupyter_data_dir(), "nbextensions", "spellchecker", "typo", "dictionaries"

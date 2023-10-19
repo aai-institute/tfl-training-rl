@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
+
 from training_rl.config import get_config
 from training_rl.nb_utils import set_random_seed
 
@@ -34,9 +35,7 @@ def get_categorical_columns(df: pd.DataFrame):
     return df.select_dtypes(include=["object", "category"]).columns
 
 
-def one_hot_encode_categorical(
-    df: pd.DataFrame, columns: list[str] = None
-) -> pd.DataFrame:
+def one_hot_encode_categorical(df: pd.DataFrame, columns: list[str] = None) -> pd.DataFrame:
     columns = columns or get_categorical_columns(df)
     for column in columns:
         df = pd.concat([df, pd.get_dummies(df[column], prefix=column)], axis=1)
@@ -70,9 +69,7 @@ def get_normalized_train_test_df(df: pd.DataFrame, test_size: float = 0.2):
     return train_df, test_df
 
 
-def evaluate_model(
-    model: SKlearnModelProtocol, X_test: pd.DataFrame, y_test: pd.DataFrame
-):
+def evaluate_model(model: SKlearnModelProtocol, X_test: pd.DataFrame, y_test: pd.DataFrame):
     y_pred = model.predict(X_test)
     print(f"Mean squared error: {mean_squared_error(y_test, y_pred)}")
     print(f"R2 score: {r2_score(y_test, y_pred)}")

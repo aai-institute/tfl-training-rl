@@ -132,7 +132,11 @@ def make_rst(src_root="src", docs_root=_DOCS_ROOT, clean=False, overwrite=False)
     for top_level_package_name in os.listdir(src_root):
         top_level_package_dir = os.path.join(src_root, top_level_package_name)
         # skipping things in src that are not packages, like .egg files
-        if not os.path.isdir(top_level_package_dir) or top_level_package_name.startswith("_") or "." in top_level_package_name:
+        if (
+            not os.path.isdir(top_level_package_dir)
+            or top_level_package_name.startswith("_")
+            or "." in top_level_package_name
+        ):
             continue
 
         log.info(f"Generating docu for top-level package {top_level_package_name}")
@@ -151,9 +155,7 @@ def make_rst(src_root="src", docs_root=_DOCS_ROOT, clean=False, overwrite=False)
                 continue
 
             base_package_relpath = os.path.relpath(root, start=top_level_package_dir)
-            base_package_qualname = os.path.relpath(root, start=src_root).replace(
-                os.path.sep, "."
-            )
+            base_package_qualname = os.path.relpath(root, start=src_root).replace(os.path.sep, ".")
 
             for dirname in dirnames:
                 if not dirname.startswith("_"):
