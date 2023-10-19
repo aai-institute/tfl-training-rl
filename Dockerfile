@@ -9,7 +9,8 @@ RUN apt-get update && apt-get upgrade -y
 # gh-pages action uses rsync
 # gcc, gfortran and libopenblas-dev are needed for slycot, which in turn is needed by the python-control package
 # build-essential required for scikit-build
-RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential gcc gfortran libopenblas-dev
+# opengl and ffmpeg needed for rendering envs
+RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential gcc gfortran libopenblas-dev python-opengl ffmpeg
 
 USER ${NB_UID}
 

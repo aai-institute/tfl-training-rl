@@ -7,10 +7,8 @@ from typing import ClassVar, Protocol
 import numpy as np
 from gymnasium import Env, utils
 from gymnasium.envs.mujoco import MujocoEnv
-from gymnasium.envs.mujoco.inverted_pendulum_v4 import (
-    DEFAULT_CAMERA_CONFIG,
-    InvertedPendulumEnv,
-)
+from gymnasium.envs.mujoco.inverted_pendulum_v4 import (DEFAULT_CAMERA_CONFIG,
+                                                        InvertedPendulumEnv)
 from gymnasium.spaces import Box
 from gymnasium.wrappers import OrderEnforcing, PassiveEnvChecker, TimeLimit
 from gymnasium.wrappers.render_collection import RenderCollection

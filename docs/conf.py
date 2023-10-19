@@ -10,8 +10,8 @@
 import ast
 import logging
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pkg_resources
 from sphinx.util.fileutil import copy_asset
@@ -101,11 +101,7 @@ def lineno_from_object_name(source_file, object_name):
     with open(source_file, "r") as f:
         source_node = ast.parse(f.read())
     desired_node = next(
-        (
-            node
-            for node in source_node.body
-            if getattr(node, "name", "") == desired_node_name
-        ),
+        (node for node in source_node.body if getattr(node, "name", "") == desired_node_name),
         None,
     )
     if desired_node is None:
@@ -306,9 +302,7 @@ latex_elements = {
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ("index", "tfl-training-rl", "", ["appliedAI TransferLab"], 1)
-]
+man_pages = [("index", "tfl-training-rl", "", ["appliedAI TransferLab"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
