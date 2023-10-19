@@ -1,5 +1,5 @@
 import logging
-from typing import Union
+from typing import Union, Callable
 
 import gymnasium as gym
 import numpy as np
@@ -24,7 +24,7 @@ def offpolicy_rendering(
     render_mode: RenderMode,
     env_2d_grid_initial_config: Grid2DInitialConfig = None,
     behavior_policy_name: BehaviorPolicyType = None,
-    policy_model: BasePolicy = None,
+    policy_model: Union[BasePolicy, Callable[[np.ndarray], Union[int, np.ndarray]]] = None,
     num_frames: int = 100,
     imitation_policy_sampling: bool = False,
 ):
@@ -90,6 +90,8 @@ def offpolicy_rendering(
                 action = env.action_space.sample()
             else:
                 action = behavior_policy(state, env)
+        elif isinstance(policy_model, Callable):
+            action = policy_model(state, env)
         else:
             tensor_state = Batch({"obs": state.reshape(1, state_shape), "info": {}})
             policy_output = policy_model(tensor_state)

@@ -68,7 +68,7 @@ def behavior_policy_8x8_grid_deterministic_4_0_to_7_7(
     state: np.ndarray, env: Custom2DGridEnv
 ) -> int:
     """
-    Deterministic suboptimal policy to move agent from (4,0) towards (7,7)
+    Deterministic policy to move agent from (4,0) towards (7,7)
 
     :param state: Agent state
     :param env:
@@ -144,3 +144,33 @@ def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
     possible_directions = [2, 3]
     weights = [1, 1]
     return random.choices(possible_directions, weights=weights)[0]
+
+
+def behavior_policy_8x8_grid_epsilon_greedy_4_0_to_7_7(
+    state: np.ndarray, env: Custom2DGridEnv
+) -> int:
+    """
+    Suboptimal policy to move agent from (4,0) towards (7,7) with noise
+
+    :param state: Agent state
+    :param env:
+    :return: The action
+    :rtype:
+    """
+
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    if state_xy == (4, 0):
+        action = 1
+    elif state_xy[0] == 5 and state_xy[1] < 7:
+        action = 3
+    else:
+        action = 1
+
+    epsilon = 0.5
+    if random.random() < epsilon:
+        possible_directions = [0, 1]
+        weights = [1, 1]
+        action = random.choices(possible_directions, weights=weights)[0]
+
+    return action
