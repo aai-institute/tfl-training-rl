@@ -7,13 +7,10 @@ ROOT_DIR="${HOME}"/tfl-training-rl
 if [ ! -d  "${ROOT_DIR}" ]; then
   echo "Code not found in ${ROOT_DIR}, copying it during entrypoint. With jupyterhub this should happen only once"
   mkdir "${ROOT_DIR}"
+  cp -rf "${CODE_DIR}"/* "${ROOT_DIR}/"
 fi
-# ALWAYS OVERWRITE FOR NOW - TODO: adjust as was before
-cp -rf "${CODE_DIR}"/* "${ROOT_DIR}/"
 
 cd "${ROOT_DIR}" || exit
-
-RUN poetry run ipython kernel install --name "tfl-training-rl" --user
 
 
 # original entrypoint, see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile#L150
