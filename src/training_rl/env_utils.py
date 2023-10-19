@@ -99,4 +99,4 @@ def demo_model(
     concatenated_trajectory = []
     while len(concatenated_trajectory) < num_steps:
         concatenated_trajectory.extend(collect_trajectory(env, agent))
-    get_trajectory_animation(concatenated_trajectory, lambda entry: env.render())
+    get_trajectory_animation(concatenated_trajectory, lambda entry: plt.imshow(entry.frame))
