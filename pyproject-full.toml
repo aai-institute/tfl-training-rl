@@ -26,10 +26,11 @@ include=["src/training_rl/assets"]
 [tool.poetry.dependencies]
 python = "^3.11"
 accsr = "^0.4.5"
+celluloid = "^0.2.0"
 control = "^0.9.4"
 do-mpc = "^4.6.1"
 docstring-parser = "^0.15"
-gymnasium = {extras = ["mujoco"], version = "^0.28.0"}
+gymnasium = {extras = ["all"], version = "^0.28.0"}
 ipykernel = "^6.25.2"
 ipywidgets = "^8.1.1"
 jsonargparse = "^4.25.0"
@@ -47,12 +48,22 @@ rise = "^5.7.1"
 seaborn = "^0.13.0"
 slycot = "^0.5.4"
 tensorboard = "^2.5.0"
-tianshou = {git = "git@github.com:aai-institute/tianshou.git", rev = "feat/high-level-api"}
 # Torch 2.0.1 causes problems, see https://github.com/pytorch/pytorch/issues/100974
 torch = "^2.0.0, !=2.0.1, !=2.1.0"
 tqdm = "*"
 traitlets = "5.9.0"
-
+docstring-parser = "^0.15"
+h5py = "^3.9.0"
+numba = "^0.57.1"
+overrides = "^7.4.0"
+tensorboard = "^2.5.0"
+tqdm = "*"
+virtualenv = [
+ # special sauce b/c of a flaky bug in poetry on windows
+ # see https://github.com/python-poetry/poetry/issues/7611#issuecomment-1466478926
+ { version = "^20.4.3,!=20.4.5,!=20.4.6" },
+ { version = "<20.16.4", markers = "sys_platform == 'win32'" },
+]
 
 [tool.poetry.group.dev]
 optional = true
