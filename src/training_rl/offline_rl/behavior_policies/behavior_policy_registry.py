@@ -40,4 +40,3 @@ class BehaviorPolicyType(str, Enum):
     behavior_move_right = "behavior_move_right"
     behavior_horizontal_random_walk = "behavior_horizontal_random_walk"
     random = "random"
-    behavior_8x8_eps_greedy_4_0_to_7_7 = "behavior_8x8_eps_greedy_4_0_to_7_7"

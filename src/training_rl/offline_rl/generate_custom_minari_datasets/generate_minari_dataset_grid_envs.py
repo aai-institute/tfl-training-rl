@@ -1,12 +1,11 @@
 import json
 import os
 from dataclasses import asdict, dataclass
-from typing import Dict, Tuple
+from typing import Dict
 
 import gymnasium as gym
 import minari
-import numpy as np
-from minari import DataCollectorV0, combine_datasets
+from minari import DataCollectorV0
 from minari.data_collector.callbacks import StepDataCallback
 from minari.storage import get_dataset_path
 
@@ -21,7 +20,6 @@ from training_rl.offline_rl.custom_envs.utils import (
 from training_rl.offline_rl.generate_custom_minari_datasets.utils import (
     generate_compatible_minari_dataset_name, get_dataset_name_2d_grid)
 from training_rl.offline_rl.utils import delete_minari_data_if_exists
-
 
 OVERRIDE_DATA_SET = True
 
@@ -97,71 +95,13 @@ def create_minari_collector_env_wrapper(
     return env
 
 
-def create_minari_config(
-    env_name: str,
-    dataset_name: str,
-    dataset_identifier: str,
-    version_dataset: str,
-    num_steps: int,
-    behavior_policy_name: str = "",
-    env_2d_grid_initial_config: Grid2DInitialConfig = None,
-) -> MinariDatasetConfig:
-    name_expert_data = generate_compatible_minari_dataset_name(
-        env_name, dataset_name, version_dataset
-    )
-
-    dataset_name += dataset_identifier
-
-    dataset_config = {
-        "env_name": env_name,
-        "data_set_name": name_expert_data,
-        "num_steps": num_steps,
-        "behavior_policy": behavior_policy_name,
-    }
-
-    if env_2d_grid_initial_config is not None:
-        dataset_config["initial_config_2d_grid_env"] = env_2d_grid_initial_config
-        dataset_name = get_dataset_name_2d_grid(env_2d_grid_initial_config) + dataset_identifier
-        name_expert_data = generate_compatible_minari_dataset_name(
-            env_name, dataset_name, version_dataset
-        )
-
-    dataset_config["data_set_name"] = name_expert_data
-
-    return MinariDatasetConfig.from_dict(dataset_config)
-
-
-def create_minari_datasets(
-        env_name: str,
-        dataset_name: str = "data",
-        dataset_identifier: str = "",
-        version_dataset: str = "V0",
-        num_colected_points: int = 1000,
-        behavior_policy_name: BehaviorPolicyType = BehaviorPolicyType.random,
-        env_2d_grid_initial_config: Grid2DInitialConfig = None,
-) -> MinariDatasetConfig:
+def create_minari_datasets(dataset_config: MinariDatasetConfig):
     """
-    Creates a custom Minari dataset and save a MinariDatasetConfig metadata to file (see /data/offline_data).
+    Creates a custom Minari dataset and save the MinariDatasetConfig metadata to file (see /data/offline_data).
 
-    :param env_name:
-    :param dataset_name:
-    :param dataset_identifier:
-    :param version_dataset:
-    :param num_colected_points:
-    :param behavior_policy_name: One of our registered behavioral policies (see behavior_policy_registry.py).
-    :param env_2d_grid_initial_config: If the environment is of type Custom2DGridEnv, its initial config
+    :param dataset_config:
     :return:
-    :rtype:
     """
-    dataset_config = create_minari_config(
-        env_name=env_name,
-        dataset_name=dataset_name,
-        dataset_identifier=dataset_identifier,
-        version_dataset=version_dataset,
-        num_steps=num_colected_points,
-        behavior_policy_name=behavior_policy_name,
-        env_2d_grid_initial_config=env_2d_grid_initial_config
-    )
 
     delete_minari_data_if_exists(dataset_config.data_set_name, override_dataset=OVERRIDE_DATA_SET)
     env = create_minari_collector_env_wrapper(
@@ -193,64 +133,39 @@ def create_minari_datasets(
     )
     dataset_config.save_to_file()
 
-    return dataset_config
 
-
-def create_combined_minari_dataset(
-        env_name: str,
-        dataset_names: Tuple[str] = ("data", "data"),
-        dataset_identifiers: Tuple[str] = ("", ""),
-        num_collected_points: Tuple[int] = (1000, 1000),
-        behavior_policy_names: Tuple[BehaviorPolicyType] = (BehaviorPolicyType.random, BehaviorPolicyType.random),
-        combined_dataset_identifier: str = "combined_dataset",
-        version_dataset: str = "V0",
-        env_2d_grid_initial_config: Grid2DInitialConfig = None,
+def create_minari_config(
+    env_name: str,
+    dataset_name: str,
+    data_set_identifier: str,
+    version_dataset: str,
+    num_steps: int,
+    behavior_policy_name: str = "",
+    env_2d_grid_initial_config: Grid2DInitialConfig = None,
 ) -> MinariDatasetConfig:
+    name_expert_data = generate_compatible_minari_dataset_name(
+        env_name, dataset_name, version_dataset
+    )
 
-    collected_dataset_names = []
+    dataset_name += data_set_identifier
 
-    for dataset_name, dataset_identifier, num_points, behavior_policy in \
-            zip(dataset_names, dataset_identifiers, num_collected_points, behavior_policy_names):
+    dataset_config = {
+        "env_name": env_name,
+        "data_set_name": name_expert_data,
+        "num_steps": num_steps,
+        "behavior_policy": behavior_policy_name,
+    }
 
-        dataset_config = create_minari_datasets(
-            env_name=env_name,
-            dataset_name=dataset_name,
-            dataset_identifier=dataset_identifier,
-            num_colected_points=num_points,
-            behavior_policy_name=behavior_policy,
-            env_2d_grid_initial_config=env_2d_grid_initial_config
+    if env_2d_grid_initial_config is not None:
+        dataset_config["initial_config_2d_grid_env"] = env_2d_grid_initial_config
+        dataset_name = get_dataset_name_2d_grid(env_2d_grid_initial_config) + data_set_identifier
+        name_expert_data = generate_compatible_minari_dataset_name(
+            env_name, dataset_name, version_dataset
         )
 
-        collected_dataset_names.append(dataset_config.data_set_name)
+    dataset_config["data_set_name"] = name_expert_data
 
-    name_combined_dataset = generate_compatible_minari_dataset_name(
-        env_name=env_name,
-        data_set_name=combined_dataset_identifier,
-        version=version_dataset
-    )
-
-    delete_minari_data_if_exists(name_combined_dataset)
-
-    minari_datasets = [
-        minari.load_dataset(dataset_id) for dataset_id in collected_dataset_names
-    ]
-
-    combined_dataset = combine_datasets(
-        minari_datasets, new_dataset_id=name_combined_dataset
-    )
-
-    print(f"Number of episodes in dataset I:{len(minari_datasets[0])}, in dataset I:{len(minari_datasets[1])} and  "
-          f"in the combined dataset: {len(combined_dataset)}")
-
-    total_num_steps = int(np.sum(num_collected_points))
-
-    # Create metadata for the combined dataset (we can reuse the metadata of set 0 for simplicity)
-    minari_combined_dataset_config = MinariDatasetConfig.load_from_file(collected_dataset_names[0])
-    minari_combined_dataset_config.num_steps = total_num_steps
-    minari_combined_dataset_config.data_set_name = name_combined_dataset
-    minari_combined_dataset_config.save_to_file()
-
-    return minari_combined_dataset_config
+    return MinariDatasetConfig.from_dict(dataset_config)
 
 
 # ToDo:
