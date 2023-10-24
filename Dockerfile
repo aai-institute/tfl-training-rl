@@ -1,39 +1,80 @@
-FROM jupyter/minimal-notebook:python-3.11
+#-------------- Base Image -------------------
+FROM jupyter/minimal-notebook:python-3.11 as BASE
 
-ENV POETRY_VERSION=1.6.1
+ARG CODE_DIR=/tmp/code
+ARG POETRY_VERSION=1.6.1
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    POETRY_VERSION=$POETRY_VERSION \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    CODE_DIR=$CODE_DIR
+
+ENV PATH="${POETRY_HOME}/bin:$PATH"
 
 USER root
-RUN apt-get update && apt-get upgrade -y
 
-# pandoc needed for docs, see https://nbsphinx.readthedocs.io/en/0.7.1/installation.html?highlight=pandoc#pandoc
-# gh-pages action uses rsync
-# build-essential required for scikit-build
-# opengl and ffmpeg needed for rendering envs
-RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential ffmpeg
+RUN curl -sSL https://install.python-poetry.org | python -
 
 USER ${NB_UID}
 
+WORKDIR $CODE_DIR
 
-# Jhub does not support notebook 7 yet, all hell breaks loose if we don't pin it
-RUN pip install "notebook<7"
+COPY --chown=${NB_UID}:${NB_GID} poetry.lock pyproject.toml .
+
+RUN poetry install --no-interaction --no-ansi --no-root --only main
+RUN poetry install --no-interaction --no-ansi --no-root --with add1
+RUN poetry install --no-interaction --no-ansi --no-root --with add2
+RUN poetry install --no-interaction --no-ansi --no-root --with control
+RUN poetry install --no-interaction --no-ansi --no-root --with offline
+
+COPY --chown=${NB_UID}:${NB_GID} src/ src/
+COPY --chown=${NB_UID}:${NB_GID} README.md .
+
+RUN poetry build
+
+
+#-------------- Main Image -------------------
+FROM jupyter/minimal-notebook:python-3.11 as MAIN
+
+ARG CODE_DIR=/tmp/code
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    CODE_DIR=$CODE_DIR
+
+ENV PATH="${CODE_DIR}/.venv/bin:$PATH"
+
+USER root
+
+# pandoc needed for docs, see https://nbsphinx.readthedocs.io/en/0.7.1/installation.html?highlight=pandoc#pandoc
+# gh-pages action uses rsync
+# opengl and ffmpeg needed for rendering envs
+RUN apt-get update \
+    && apt-get -y --no-install-recommends install pandoc git-lfs rsync ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+USER ${NB_UID}
+
+WORKDIR ${CODE_DIR}
+
+# Copy virtual environment from base image
+COPY --from=BASE ${CODE_DIR}/.venv ${CODE_DIR}/.venv
+# Copy built package from base image
+COPY --from=BASE ${CODE_DIR}/dist ${CODE_DIR}/dist
+
 # This goes directly into main jupyter, not poetry env
 COPY --chown=${NB_UID}:${NB_GID} build_scripts ./build_scripts
 RUN bash build_scripts/install_presentation_requirements.sh
 
-
-# Install poetry according to
-# https://python-poetry.org/docs/#installing-manually
-RUN pip install -U setuptools "poetry==$POETRY_VERSION"
-
-WORKDIR /tmp
-
 # Start of HACK: the home directory is overwritten by a mount when a jhub server is started off this image
 # Thus, we create a jovyan-owned directory to which we copy the code and then move it to the home dir as part
 # of the entrypoint
-ENV CODE_DIR=/tmp/code
-
-RUN mkdir $CODE_DIR
-
 COPY --chown=${NB_UID}:${NB_GID} entrypoint.sh $CODE_DIR
 
 RUN chmod +x "${CODE_DIR}/"entrypoint.sh
@@ -51,13 +92,6 @@ COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 # complete code base, including the poetry.lock file 
 WORKDIR $CODE_DIR
 
-RUN poetry config virtualenvs.in-project true
-RUN poetry install --no-interaction --no-ansi --only main
-RUN poetry install --no-interaction --no-ansi --only main,add1
-RUN poetry install --no-interaction --no-ansi --only main,add1,add2
-RUN poetry install --no-interaction --no-ansi --with control
-RUN poetry install --no-interaction --no-ansi --with offline
-# use poetry for package mgmt.
-RUN poetry run ipython kernel install --name "tfl-training-rl" --user
-# DIRTY HACK
-RUN pip install -U "notebook<7" ipykernel
+RUN pip install --no-cache-dir dist/*.whl
+
+RUN ipython kernel install --name "tfl-training-rl" --user

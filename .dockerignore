@@ -9,6 +9,7 @@
 !config.yml
 !requirements*.txt
 !pyproject.toml
+!poetry.lock
 !pyproject-full.toml
 !entrypoint.sh
 !README.md
