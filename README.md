@@ -40,7 +40,7 @@ There are multiple ways of viewing/executing the content.
    You can then start the container e.g., with
     
    ```shell
-   docker run -it -p 8888:8888 training_rl jupyter notebook
+   docker run -it -p 8888:8888 training_rl jupyter notebook --ip=0.0.0.0
    ```
 
 4. Finally, for creating source code documentation, you can run
