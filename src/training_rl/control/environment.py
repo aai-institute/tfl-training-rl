@@ -4,17 +4,21 @@ import os
 from dataclasses import dataclass
 from typing import ClassVar, Protocol
 
+import mediapy as media
 import numpy as np
 from gymnasium import Env, utils
 from gymnasium.envs.mujoco import MujocoEnv
-from gymnasium.envs.mujoco.inverted_pendulum_v4 import (DEFAULT_CAMERA_CONFIG,
-                                                        InvertedPendulumEnv)
+from gymnasium.envs.mujoco.inverted_pendulum_v4 import (
+    DEFAULT_CAMERA_CONFIG,
+    InvertedPendulumEnv,
+)
 from gymnasium.spaces import Box
 from gymnasium.wrappers import OrderEnforcing, PassiveEnvChecker, TimeLimit
 from gymnasium.wrappers.render_collection import RenderCollection
 from numpy.typing import NDArray
 
 __all__ = [
+    "show_video",
     "create_inverted_pendulum_environment",
     "create_mass_spring_damper_environment",
     "simulate_environment",
@@ -24,8 +28,18 @@ __all__ = [
 ASSETS_DIR = importlib.resources.files(__package__) / "../assets"
 
 
+def show_video(frames: list[NDArray], fps: float) -> None:
+    """Renders the given frames as a video.
+
+    If no frames are passed, then it simply returns without doing anything.
+    """
+    if len(frames) == 0:
+        return
+    media.show_video(frames, fps=fps)
+
+
 def create_inverted_pendulum_environment(
-    render_mode: str = "rgb_array",
+    render_mode: str | None = "rgb_array",
     max_steps: int = 100,
     cutoff_angle: float = 0.8,
     initial_angle: float = 0.0,
@@ -41,11 +55,13 @@ def create_inverted_pendulum_environment(
     env = PassiveEnvChecker(env)
     env = OrderEnforcing(env)
     env = TimeLimit(env, max_steps)
-    return RenderCollection(env)
+    if render_mode is not None:
+        env = RenderCollection(env)
+    return env
 
 
 def create_mass_spring_damper_environment(
-    render_mode: str = "rgb_array",
+    render_mode: str | None = "rgb_array",
     max_steps: int = 100,
 ) -> Env:
     """Creates instance of MassSpringDamperEnv with some wrappers
@@ -55,7 +71,9 @@ def create_mass_spring_damper_environment(
     env = PassiveEnvChecker(env)
     env = OrderEnforcing(env)
     env = TimeLimit(env, max_steps)
-    return RenderCollection(env)
+    if render_mode is not None:
+        env = RenderCollection(env)
+    return env
 
 
 class InvertedPendulumEnvWithInitialAndCutoffAngle(InvertedPendulumEnv):
