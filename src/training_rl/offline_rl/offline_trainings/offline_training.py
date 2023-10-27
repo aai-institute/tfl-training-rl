@@ -4,12 +4,12 @@ from typing import Optional
 import gymnasium as gym
 import numpy as np
 import torch
+
 from tianshou.data import Collector
 from tianshou.env import SubprocVectorEnv
 from tianshou.policy import BasePolicy
-from tianshou.trainer import offline_trainer
+from tianshou.trainer import OfflineTrainer
 from tianshou.utils import TensorboardLogger
-
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
     register_grid_envs
 from training_rl.offline_rl.custom_envs.utils import \
@@ -143,18 +143,19 @@ def offline_training(
     logger = TensorboardLogger(custom_writer)
 
     # Training
-    _ = offline_trainer(
+    _ = OfflineTrainer(
         policy=policy,
         buffer=data_buffer,
         test_collector=test_collector,
         max_epoch=num_epochs,
-        update_per_epoch=update_per_epoch,
+        update_per_step=1.0,
+        step_per_epoch=update_per_epoch,
         episode_per_test=number_test_envs,
         batch_size=batch_size,
         stop_fn=stop_fn,
         save_best_fn=save_best_fn,
         logger=logger,
-    )
+    ).run()
 
     # Save final policy
     torch.save(policy.state_dict(), os.path.join(log_path, POLICY_NAME))

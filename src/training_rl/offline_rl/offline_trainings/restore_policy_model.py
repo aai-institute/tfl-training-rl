@@ -1,6 +1,6 @@
 import gymnasium as gym
-import tianshou
 
+import tianshou
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
     register_grid_envs
 from training_rl.offline_rl.custom_envs.utils import \

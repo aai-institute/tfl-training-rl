@@ -3,13 +3,13 @@ from typing import Any, Dict
 import gymnasium as gym
 import numpy as np
 import torch
-from tianshou.policy import PPOPolicy
-from tianshou.utils.net.common import ActorCritic, Net
-from tianshou.utils.net.continuous import ActorProb, Critic
 from torch import nn
 from torch.distributions import Independent, Normal
 from torch.optim.lr_scheduler import LambdaLR
 
+from tianshou.policy import PPOPolicy
+from tianshou.utils.net.common import ActorCritic, Net
+from tianshou.utils.net.continuous import ActorProb, Critic
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
@@ -109,10 +109,10 @@ def create_ppo_policy_from_dict(
         return Independent(Normal(*logits), 1)
 
     policy = PPOPolicy(
-        actor,
-        critic,
-        optim,
-        dist,
+        actor=actor,
+        critic=critic,
+        optim=optim,
+        dist_fn=dist,
         discount_factor=policy_config["gamma"],
         gae_lambda=policy_config["gae_lambda"],
         max_grad_norm=policy_config["max_grad_norm"],

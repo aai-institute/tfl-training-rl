@@ -2,10 +2,10 @@ from typing import Any, Dict
 
 import gymnasium as gym
 import torch
+
 from tianshou.policy import BCQPolicy
 from tianshou.utils.net.common import MLP, Net
 from tianshou.utils.net.continuous import VAE, Critic, Perturbation
-
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
@@ -97,20 +97,21 @@ def create_bcq_continuous_policy_from_dict(
     vae_optim = torch.optim.Adam(vae.parameters())
 
     policy = BCQPolicy(
-        actor,
-        actor_optim,
-        critic1,
-        critic1_optim,
-        critic2,
-        critic2_optim,
-        vae,
-        vae_optim,
+        actor_perturbation=actor,
+        actor_perturbation_optim=actor_optim,
+        critic=critic1,
+        critic_optim=critic1_optim,
+        critic2=critic2,
+        critic2_optim=critic2_optim,
+        vae=vae,
+        vae_optim=vae_optim,
         device=policy_config["device"],
         gamma=policy_config["gamma"],
         tau=policy_config["tau"],
         lmbda=policy_config["lmbda"],
         forward_sampled_times=policy_config["forward_sampled_times"],
         num_sampled_action=policy_config["num_sampled_action"],
+        action_space=action_space,
     )
 
     return policy

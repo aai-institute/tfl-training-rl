@@ -6,7 +6,6 @@ from training_rl.offline_rl.custom_envs.custom_2d_grid_env.simple_grid import \
     Custom2DGridEnv
 from training_rl.offline_rl.utils import one_hot_to_integer
 
-
 # MOVES:
 #   0: (-1, 0),  # UP
 #   1: (1, 0),  # DOWN
@@ -109,7 +108,7 @@ def behavior_policy_8x8_grid_epsilon_greedy_4_0_to_7_7(
 
     epsilon = 0.5
     if random.random() < epsilon:
-        possible_directions = [0, 1,3]
+        possible_directions = [0, 1, 3]
         weights = [3, 3, 1]
         action = random.choices(possible_directions, weights=weights)[0]
 
@@ -175,21 +174,6 @@ def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
     possible_directions = [2, 3]
     weights = [1, 1]
     return random.choices(possible_directions, weights=weights)[0]
-
-
-'''
-def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
-    state_index = one_hot_to_integer(state)
-    state_xy = env.to_xy(state_index)
-
-    possible_directions = [2, 3, 1]
-    weights = [1, 2, 1]
-
-    if state_xy[0] == 2:
-        possible_directions = [0, 2, 3]
-        weights = [2, 1, 2]
-    return random.choices(possible_directions, weights=weights)[0]
-'''
 
 
 def behavior_policy_8x8_grid_moves_downwards_within_strip_and_left(
