@@ -5,11 +5,11 @@ import gymnasium as gym
 import numpy as np
 import torch
 from matplotlib import pyplot as plt
-from tianshou.data import Batch, ReplayBuffer
-from tianshou.policy import ImitationPolicy
 from torch import nn
 from tqdm import tqdm
 
+from tianshou.data import Batch, ReplayBuffer
+from tianshou.policy import ImitationPolicy
 from training_rl.offline_rl.utils import extract_dimension, one_hot_to_integer
 
 
@@ -65,8 +65,8 @@ def get_state_action_data_and_policy_grid_distributions(
                         action = (
                             policy_output.act[0]
                             if (
-                                    isinstance(policy_output.act[0], np.ndarray)
-                                    or isinstance(policy_output.act, np.ndarray)
+                                isinstance(policy_output.act[0], np.ndarray)
+                                or isinstance(policy_output.act, np.ndarray)
                             )
                             else policy_output.act[0].detach().numpy()
                         )

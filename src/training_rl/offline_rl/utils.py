@@ -1,7 +1,7 @@
 import os
 from importlib import resources
 from pathlib import Path
-from typing import Any, Dict, Tuple, Union, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import gymnasium as gym
 import matplotlib.pyplot as plt
@@ -10,6 +10,7 @@ import numpy as np
 import torch
 from minari import EpisodeData
 from minari.storage import get_dataset_path
+
 from tianshou.data import Batch, ReplayBuffer
 
 
@@ -43,7 +44,7 @@ def state_action_histogram(
     state_action_count: Dict[Any, int],
     title: str = None,
     normalized=True,
-    inset_pos_xy: Optional[None] = (-0.1, - 0.013),
+    inset_pos_xy: Optional[None] = (-0.1, -0.013),
 ):
     keys = list(state_action_count.keys())
     values = list(state_action_count.values())
@@ -74,7 +75,13 @@ def state_action_histogram(
         inset_text = f"state = (x,y) ~ x + y*grid_size  -  action: (0:UP, 1:DOWN, 2:LEFT, 3:RIGHT)"  # Modify this with your desired text
         inset_x = inset_pos_xy[0]  # Adjust the x-coordinate
         inset_y = inset_pos_xy[1]  # Adjust the y-coordinate
-        plt.text(inset_x, inset_y, inset_text, fontsize=8, bbox=dict(facecolor='white', edgecolor='black'))
+        plt.text(
+            inset_x,
+            inset_y,
+            inset_text,
+            fontsize=8,
+            bbox=dict(facecolor="white", edgecolor="black"),
+        )
 
     plt.show()
 
@@ -343,3 +350,13 @@ def load_buffer_minari(expert_data_task: str) -> ReplayBuffer:
         truncated=np.zeros(len(terminals)),
     )
     return replay_buffer
+
+
+def check_minari_files_exist(file_paths: Union[str, List[str]]) -> None:
+    data_set_minari_paths = get_dataset_path("")
+    if isinstance(file_paths, str):
+        file_paths = [file_paths]
+
+    for file_path in file_paths:
+        if not os.path.exists(os.path.join(data_set_minari_paths, file_path)):
+            raise FileNotFoundError(f"File not found: {file_path}")
