@@ -44,7 +44,7 @@ def state_action_histogram(
     state_action_count: Dict[Any, int],
     title: str = None,
     normalized=True,
-    inset_pos_xy: Optional[None] = (-0.1, -0.013),
+    inset_pos_xy: Optional[None] = None,
 ):
     keys = list(state_action_count.keys())
     values = list(state_action_count.values())

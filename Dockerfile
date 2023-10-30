@@ -11,6 +11,7 @@ RUN apt-get update && apt-get upgrade -y
 # build-essential required for scikit-build
 # opengl and ffmpeg needed for rendering envs
 RUN apt-get -y --no-install-recommends install pandoc git-lfs rsync build-essential gcc gfortran libopenblas-dev ffmpeg
+RUN apt-get install x11-xserver-utils
 
 USER ${NB_UID}
 

@@ -14,9 +14,9 @@ policy_config = {
     "lr": 0.001,
     "gamma": 0.99,
     "n_step": 10,
-    "target_update_freq": 200,
+    "target_update_freq": 100,
     "eps_test": 0.01,
-    "unlikely_action_threshold": 0.9,  # as lower better result but o.o.d. actions
+    "unlikely_action_threshold": 0.8,  # as lower better result but o.o.d. actions
     "imitation_logits_penalty": 0.001,  # 0.001
 }
 
@@ -32,8 +32,6 @@ def create_bcq_discrete_policy_from_dict(
 ):
     observation_shape = extract_dimension(observation_space)
     action_shape = extract_dimension(action_space)
-
-    print(f"observation/action shapes {observation_shape, action_shape}")
 
     class DQNVector(nn.Module):
         def __init__(

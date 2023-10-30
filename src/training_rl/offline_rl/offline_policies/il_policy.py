@@ -57,8 +57,6 @@ def create_il_policy_from_dict(
     observation_shape = extract_dimension(observation_space)
     action_shape = extract_dimension(action_space)
 
-    print(action_shape, observation_shape)
-
     device = "cpu"
 
     net = DQNVector(observation_shape, action_shape, device=device).to(device)

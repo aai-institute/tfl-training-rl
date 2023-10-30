@@ -11,10 +11,10 @@ from training_rl.offline_rl.utils import extract_dimension
 policy_config = {
     "lr": 0.0001,  # 6.25e-5
     "gamma": 0.99,
-    "n_step": 10,
-    "target_update_freq": 10,
-    "num_quantiles": 200,
-    "min_q_weight": 10.0,
+    "n_step": 5,
+    "target_update_freq": 50,
+    "num_quantiles": 20,
+    "min_q_weight": 13.0,
     "device": "cpu",
 }
 

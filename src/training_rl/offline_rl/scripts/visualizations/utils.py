@@ -1,6 +1,5 @@
 from typing import Dict, Tuple, Union
 
-import cv2
 import gymnasium as gym
 import numpy as np
 import torch
@@ -103,13 +102,5 @@ def snapshot_env(env: gym.Env):
     plt.show()  # Show the frame in a separate window
 
 
-def render_rgb_frames(env: gym.Env, time_frame=100):
-    rendered_data = env.render()
-    frames = rendered_data[0]
-    height, width, _ = frames.shape
 
-    cv2.imshow("Video", frames)
-    if cv2.waitKey(time_frame) & 0xFF == ord("q"):
-        cv2.destroyAllWindows()
-        raise InterruptedError("You quit ('q') the animation.")
-        # logging.warning("You quit ('q') the animation.")
+

@@ -48,8 +48,6 @@ def create_ppo_policy_from_dict(
     observation_shape = extract_dimension(observation_space)
     action_shape = extract_dimension(action_space)
 
-    print(action_shape, observation_shape)
-
     # model
     net_a = Net(
         observation_shape,

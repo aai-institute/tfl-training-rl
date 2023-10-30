@@ -1,9 +1,10 @@
 import logging
+import sys
 from typing import Callable, Union
 
-import cv2
 import gymnasium as gym
 import numpy as np
+import pygame
 import torch
 from matplotlib import pyplot as plt
 
@@ -15,32 +16,41 @@ from training_rl.offline_rl.custom_envs.custom_envs_registration import \
     RenderMode
 from training_rl.offline_rl.custom_envs.utils import (
     Grid2DInitialConfig, InitialConfigCustom2DGridEnvWrapper)
-from training_rl.offline_rl.scripts.visualizations.utils import \
-    render_rgb_frames
 from training_rl.offline_rl.utils import extract_dimension
 
-logging.basicConfig(level=logging.WARNING)  # Set the logging level to WARNING or higher
-
+logging.basicConfig(level=logging.WARNING)
 
 def snapshot_env(env: gym.Env):
     env.reset()
     env.step(0)
-    rendered_data = env.render()  # Capture the frame as a NumPy array
-    rendered_data = rendered_data[0].reshape(256, 256, 3)
-    plt.imshow(rendered_data)  # Display the frame using matplotlib
-    plt.show()  # Show the frame in a separate window
-
-
-def render_rgb_frames(env: gym.Env, time_frame=50):
     rendered_data = env.render()
-    frames = rendered_data[0]
-    height, width, _ = frames.shape
+    rendered_data = rendered_data[0].reshape(256, 256, 3)
+    plt.imshow(rendered_data)
+    plt.show()
 
-    cv2.imshow("Video", frames)
-    if cv2.waitKey(time_frame) & 0xFF == ord("q"):
-        cv2.destroyAllWindows()
-        raise InterruptedError("You quit ('q') the animation.")
-        # logging.warning("You quit ('q') the animation.")
+def render_rgb_frames_pygame(env: gym.Env, screen, time_frame=20):
+    clock = pygame.time.Clock()
+    desired_fps = time_frame
+    clock.tick(desired_fps)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    rendered_data = env.render()
+    frames = np.transpose(rendered_data[0], (1, 0, 2))
+    pygame_surface = pygame.surfarray.make_surface(frames)
+    screen.blit(pygame_surface, (0, 0))
+    pygame.display.flip()
+
+
+def initialize_pygame(title="RL agent animation"):
+    import pygame
+    pygame.init()
+    screen = pygame.display.set_mode([256, 256])
+    pygame.display.set_caption(title)
+    return screen
 
 
 def offpolicy_rendering(
@@ -102,7 +112,9 @@ def offpolicy_rendering(
     state, _ = env.reset()
 
     state_shape = extract_dimension(env.observation_space)
-    action_shape = extract_dimension(env.action_space)
+
+    if render_mode == RenderMode.RGB_ARRAY_LIST:
+        screen = initialize_pygame()
 
     for _ in range(num_frames):
         if behavior_policy_name is not None:
@@ -139,7 +151,7 @@ def offpolicy_rendering(
         num_frames += 1
 
         if render_mode == RenderMode.RGB_ARRAY_LIST:
-            render_rgb_frames(env)
+            render_rgb_frames_pygame(env, screen)
         else:
             env.render()
 
@@ -148,3 +160,5 @@ def offpolicy_rendering(
             num_frames = 0
         else:
             state = next_state
+
+    pygame.quit()

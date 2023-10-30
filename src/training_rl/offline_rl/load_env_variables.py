@@ -1,6 +1,5 @@
 import os
 
-
 def load_env_variables():
     current_directory = os.path.dirname(__file__)
     mujoco_directory = os.path.expanduser("~/.mujoco")
@@ -13,5 +12,6 @@ def load_env_variables():
             # Add more variables as needed
         }
     )
+
 
     return env_variables

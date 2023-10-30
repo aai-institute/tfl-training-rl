@@ -47,6 +47,17 @@ First, set the variable `PARTICIPANT_BUCKET_READ_SECRET` to the secret found in
     This will also rebuild the jupyter-book based notebook documentation
     that was originally found in the `html` directory.
 
+6. In case you experience some issues with the rendering when using docker
+make sure to add the docker user to xhost. So run on your local machine: 
+
+xhost +SI:localuser:docker_user
+
+and run docker like: 
+
+docker run -p 8888:8888 -it --env DISPLAY=$DISPLAY --net=host --privileged --volume /tmp/.X11-unix:/tmp/.X11-unix  training_rl bash
+
+
+
 Note that there is some non-trivial logic in the entrypoint that may collide
 with mounting volumes to paths directly inside 
 `/home/jovyan/training_rl`. If you want to do that, 
