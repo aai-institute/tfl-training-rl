@@ -100,7 +100,3 @@ def snapshot_env(env: gym.Env):
     rendered_data = rendered_data[0].reshape(256, 256, 3)
     plt.imshow(rendered_data)  # Display the frame using matplotlib
     plt.show()  # Show the frame in a separate window
-
-
-
-

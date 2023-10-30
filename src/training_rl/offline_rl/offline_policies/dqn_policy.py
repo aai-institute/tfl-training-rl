@@ -30,7 +30,6 @@ def create_dqn_policy_from_dict(
     observation_shape = extract_dimension(observation_space)
     action_shape = extract_dimension(action_space)
 
-
     device = policy_config["device"]
 
     net = Net(

@@ -20,6 +20,7 @@ from training_rl.offline_rl.utils import extract_dimension
 
 logging.basicConfig(level=logging.WARNING)
 
+
 def snapshot_env(env: gym.Env):
     env.reset()
     env.step(0)
@@ -27,6 +28,7 @@ def snapshot_env(env: gym.Env):
     rendered_data = rendered_data[0].reshape(256, 256, 3)
     plt.imshow(rendered_data)
     plt.show()
+
 
 def render_rgb_frames_pygame(env: gym.Env, screen, time_frame=20):
     clock = pygame.time.Clock()
@@ -47,6 +49,7 @@ def render_rgb_frames_pygame(env: gym.Env, screen, time_frame=20):
 
 def initialize_pygame(title="RL agent animation"):
     import pygame
+
     pygame.init()
     screen = pygame.display.set_mode([256, 256])
     pygame.display.set_caption(title)

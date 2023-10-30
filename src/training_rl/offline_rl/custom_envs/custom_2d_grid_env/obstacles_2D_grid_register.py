@@ -105,7 +105,6 @@ class ObstacleTypes(Enum):
         "00000000",
     ]
 
-
     door_object_8x8 = [
         "00000000",
         "00000000",

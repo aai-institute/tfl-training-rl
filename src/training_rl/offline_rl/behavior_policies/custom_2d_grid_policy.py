@@ -84,6 +84,7 @@ def behavior_policy_8x8_grid_deterministic_4_0_to_7_7(
     else:
         return 1
 
+
 def behavior_policy_8x8_grid_deterministic_0_0_to_4_7(
     state: np.ndarray, env: Custom2DGridEnv
 ) -> int:
@@ -103,10 +104,7 @@ def behavior_policy_8x8_grid_deterministic_0_0_to_4_7(
         return 1
 
 
-
-def behavior_policy_8x8_grid_suboptimal_0_0_to_4_7(
-    state: np.ndarray, env: Custom2DGridEnv
-) -> int:
+def behavior_policy_8x8_grid_suboptimal_0_0_to_4_7(state: np.ndarray, env: Custom2DGridEnv) -> int:
     """
     Deterministic suboptimal policy to move agent from (4,0) towards (7,7)
 
@@ -118,8 +116,7 @@ def behavior_policy_8x8_grid_suboptimal_0_0_to_4_7(
     state_index = one_hot_to_integer(state)
     state_xy = env.to_xy(state_index)
 
-
-    if state_xy == (5,7):
+    if state_xy == (5, 7):
         return 0
 
     if state_xy[0] == 4:
@@ -182,8 +179,6 @@ def behavior_policy_8x8_grid_random_towards_left_within_strip(
     random_directions = random.choices(possible_directions, weights=weights)[0]
 
     return random_directions
-
-
 
 
 def behavior_policy_8x8_grid_avoid_vertical_obstacle(
