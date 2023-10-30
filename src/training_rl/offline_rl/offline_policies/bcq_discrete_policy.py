@@ -2,21 +2,21 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import gymnasium as gym
 import numpy as np
-import tianshou.utils.net.discrete
 import torch
-from tianshou.policy import DiscreteBCQPolicy
-from tianshou.utils.net.common import ActorCritic
 from torch import nn
 
+import tianshou.utils.net.discrete
+from tianshou.policy import DiscreteBCQPolicy
+from tianshou.utils.net.common import ActorCritic
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
     "lr": 0.001,
     "gamma": 0.99,
     "n_step": 10,
-    "target_update_freq": 200,
+    "target_update_freq": 100,
     "eps_test": 0.01,
-    "unlikely_action_threshold": 0.9,  # as lower better result but o.o.d. actions
+    "unlikely_action_threshold": 0.8,  # as lower better result but o.o.d. actions
     "imitation_logits_penalty": 0.001,  # 0.001
 }
 
@@ -32,8 +32,6 @@ def create_bcq_discrete_policy_from_dict(
 ):
     observation_shape = extract_dimension(observation_space)
     action_shape = extract_dimension(action_space)
-
-    print(f"observation/action shapes {observation_shape, action_shape}")
 
     class DQNVector(nn.Module):
         def __init__(
@@ -118,15 +116,16 @@ def create_bcq_discrete_policy_from_dict(
     optim = torch.optim.Adam(actor_critic.parameters(), lr=policy_config["lr"])
 
     policy = DiscreteBCQPolicy(
-        policy_net,
-        imitation_net,
-        optim,
-        policy_config["gamma"],
-        policy_config["n_step"],
-        policy_config["target_update_freq"],
-        policy_config["eps_test"],
-        policy_config["unlikely_action_threshold"],
-        policy_config["imitation_logits_penalty"],
+        model=policy_net,
+        imitator=imitation_net,
+        optim=optim,
+        action_space=action_space,
+        discount_factor=policy_config["gamma"],
+        estimation_step=policy_config["n_step"],
+        target_update_freq=policy_config["target_update_freq"],
+        eval_eps=policy_config["eps_test"],
+        unlikely_action_threshold=policy_config["unlikely_action_threshold"],
+        imitation_logits_penalty=policy_config["imitation_logits_penalty"],
     )
 
     # policy.set_eps(policy_config["eps_test"])

@@ -2,12 +2,12 @@ from typing import Any, Dict
 
 import gymnasium as gym
 import numpy as np
-import tianshou
 import torch
+
+import tianshou
 from tianshou.policy import CQLPolicy
 from tianshou.utils.net.common import Net
 from tianshou.utils.net.continuous import ActorProb
-
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
@@ -91,12 +91,13 @@ def create_cql_continuous_policy_from_dict(
         alpha = policy_config["alpha"]
 
     policy = CQLPolicy(
-        actor,
-        actor_optim,
-        critic1,
-        critic1_optim,
-        critic2,
-        critic2_optim,
+        actor=actor,
+        action_space=action_space,
+        actor_optim=actor_optim,
+        critic=critic1,
+        critic_optim=critic1_optim,
+        critic2=critic2,
+        critic2_optim=critic2_optim,
         cql_alpha_lr=policy_config["cql_alpha_lr"],
         cql_weight=policy_config["cql_weight"],
         tau=policy_config["tau"],

@@ -35,6 +35,10 @@ notebook = "<7.0.0"
 optional = true
 [tool.poetry.group.offline.dependencies]
 minari = "^0.4.2"
+chardet ="*"
+opencv-python="*"
+tensorboardX="*"
+pygame = "*"
 
 [tool.poetry.group.add1]
 optional = true
