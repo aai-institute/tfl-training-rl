@@ -1,10 +1,10 @@
 from typing import Any, Dict
 
 import gymnasium as gym
-import tianshou
 import torch
-from tianshou.utils.net.common import Net
 
+import tianshou
+from tianshou.utils.net.common import Net
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
@@ -30,8 +30,6 @@ def create_dqn_policy_from_dict(
     observation_shape = extract_dimension(observation_space)
     action_shape = extract_dimension(action_space)
 
-    print(action_shape, observation_shape)
-
     device = policy_config["device"]
 
     net = Net(
@@ -42,10 +40,11 @@ def create_dqn_policy_from_dict(
     optim = torch.optim.Adam(net.parameters(), lr=policy_config["lr"])
 
     policy = tianshou.policy.DQNPolicy(
-        net,
-        optim,
-        policy_config["gamma"],
-        policy_config["n_steps"],
+        model=net,
+        optim=optim,
+        action_space=action_space,
+        discount_factor=policy_config["gamma"],
+        estimation_step=policy_config["n_steps"],
         target_update_freq=policy_config["target_freq"],
     )
     policy.set_eps(policy_config["epsilon"])

@@ -1,15 +1,14 @@
 from typing import Dict, Tuple, Union
 
-import cv2
 import gymnasium as gym
 import numpy as np
 import torch
 from matplotlib import pyplot as plt
-from tianshou.data import Batch, ReplayBuffer
-from tianshou.policy import ImitationPolicy
 from torch import nn
 from tqdm import tqdm
 
+from tianshou.data import Batch, ReplayBuffer
+from tianshou.policy import ImitationPolicy
 from training_rl.offline_rl.utils import extract_dimension, one_hot_to_integer
 
 
@@ -65,8 +64,8 @@ def get_state_action_data_and_policy_grid_distributions(
                         action = (
                             policy_output.act[0]
                             if (
-                                    isinstance(policy_output.act[0], np.ndarray)
-                                    or isinstance(policy_output.act, np.ndarray)
+                                isinstance(policy_output.act[0], np.ndarray)
+                                or isinstance(policy_output.act, np.ndarray)
                             )
                             else policy_output.act[0].detach().numpy()
                         )
@@ -101,15 +100,3 @@ def snapshot_env(env: gym.Env):
     rendered_data = rendered_data[0].reshape(256, 256, 3)
     plt.imshow(rendered_data)  # Display the frame using matplotlib
     plt.show()  # Show the frame in a separate window
-
-
-def render_rgb_frames(env: gym.Env, time_frame=100):
-    rendered_data = env.render()
-    frames = rendered_data[0]
-    height, width, _ = frames.shape
-
-    cv2.imshow("Video", frames)
-    if cv2.waitKey(time_frame) & 0xFF == ord("q"):
-        cv2.destroyAllWindows()
-        raise InterruptedError("You quit ('q') the animation.")
-        # logging.warning("You quit ('q') the animation.")

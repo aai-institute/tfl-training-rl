@@ -4,7 +4,8 @@ FROM jupyter/minimal-notebook:python-3.11 as BASE
 ARG CODE_DIR=/tmp/code
 ARG POETRY_VERSION=1.6.1
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     POETRY_VERSION=$POETRY_VERSION \
@@ -43,7 +44,8 @@ FROM jupyter/minimal-notebook:python-3.11 as MAIN
 
 ARG CODE_DIR=/tmp/code
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
+ENV DEBIAN_FRONTEND=noninteractive\
+    PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     CODE_DIR=$CODE_DIR
@@ -56,7 +58,7 @@ USER root
 # gh-pages action uses rsync
 # opengl and ffmpeg needed for rendering envs
 RUN apt-get update \
-    && apt-get -y --no-install-recommends install pandoc git-lfs rsync ffmpeg \
+    && apt-get -y --no-install-recommends install pandoc git-lfs rsync ffmpeg x11-xserver-utils \
     && rm -rf /var/lib/apt/lists/*
 
 USER ${NB_UID}
@@ -95,3 +97,5 @@ WORKDIR $CODE_DIR
 RUN pip install --no-cache-dir dist/*.whl
 
 RUN ipython kernel install --name "tfl-training-rl" --user
+
+RUN jupyter trust notebooks

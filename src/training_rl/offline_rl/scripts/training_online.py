@@ -11,7 +11,8 @@ from training_rl.offline_rl.online_trainings.online_training import \
 load_env_variables()
 
 NAME_EXPERT_DATA = (
-    "Grid_2D_8x8_continuous-data_vertical_object_8x8_start_0_0_target_0_7move_around_obstacle-v0"
+    # "Grid_2D_8x8_discrete-data_vertical_object_8x8_start_0_0_target_0_7-v0"
+    "Grid_2D_8x8_continuous-data_vertical_object_8x8_start_0_0_target_0_7-v0"
 )
 # "relocate-cloned-v1"
 # "Grid_2D_8x8_discrete-combined_data_set-V0"
@@ -22,7 +23,6 @@ NUM_EPOCHS = 1
 BATCH_SIZE = 64
 STEP_PER_EPOCH = 100000
 STEP_PER_COLLECT = 10
-# UPDATE_PER_EPOCH = 200
 
 NUMBER_TRAINING_ENVS = 10
 NUMBER_TEST_ENVS = 5

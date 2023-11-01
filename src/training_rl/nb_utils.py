@@ -1,12 +1,12 @@
 import os
 import random
 from collections.abc import Sequence
+from itertools import zip_longest
 
 import numpy as np
 import pandas as pd
 from IPython.core.magic import Magics, line_magic, magics_class
 from IPython.display import HTML, Markdown, display
-from itertools import zip_longest
 
 from .constants import LATEX_MACROS
 

@@ -3,18 +3,18 @@ from typing import Any, Dict, Optional, Tuple, Union
 import gymnasium as gym
 import numpy as np
 import torch
-from tianshou.policy import DiscreteCQLPolicy
 
+from tianshou.policy import DiscreteCQLPolicy
 from training_rl.offline_rl.offline_policies.il_policy import DQNVector
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
     "lr": 0.0001,  # 6.25e-5
     "gamma": 0.99,
-    "n_step": 10,
-    "target_update_freq": 10,
-    "num_quantiles": 200,
-    "min_q_weight": 10.0,
+    "n_step": 5,
+    "target_update_freq": 50,
+    "num_quantiles": 20,
+    "min_q_weight": 13.0,
     "device": "cpu",
 }
 
@@ -58,12 +58,13 @@ def create_cql_discrete_policy_from_dict(
 
     optim = torch.optim.Adam(net.parameters(), lr=policy_config["lr"])
     policy = DiscreteCQLPolicy(
-        net,
-        optim,
-        policy_config["gamma"],
-        policy_config["num_quantiles"],
-        policy_config["n_step"],
-        policy_config["target_update_freq"],
+        model=net,
+        optim=optim,
+        action_space=action_space,
+        discount_factor=policy_config["gamma"],
+        num_quantiles=policy_config["num_quantiles"],
+        estimation_step=policy_config["n_step"],
+        target_update_freq=policy_config["target_update_freq"],
         min_q_weight=policy_config["min_q_weight"],
     ).to(policy_config["device"])
 

@@ -34,13 +34,13 @@ There are multiple ways of viewing/executing the content.
    you can build the image locally using:
     
    ```shell
-   docker build -t training_rl .
+   docker build -t tfl-training-rl:local .
    ```
 
    You can then start the container e.g., with
     
    ```shell
-   docker run -it -p 8888:8888 training_rl jupyter notebook --ip=0.0.0.0
+   docker run -it -p 8888:8888 tfl-training-rl:local jupyter notebook --ip=0.0.0.0
    ```
 
 4. Finally, for creating source code documentation, you can run
@@ -53,7 +53,23 @@ There are multiple ways of viewing/executing the content.
    This will also rebuild the jupyter-book based notebook documentation
    that was originally found in the `html` directory.
 
-Note that there is some non-trivial logic in the entrypoint that may collide
+6. In case you experience some issues with the rendering when using docker
+   make sure to add the docker user to xhost. So run on your local machine: 
+
+   ```shell
+   xhost +SI:localuser:docker_user
+   ```
+
+   and run docker using: 
+
+    
+   ```shell
+   docker run -it --rm --privileged --net=host \
+      --env DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix \
+      tfl-training-rl:local jupyter notebook --ip=0.0.0.0
+   ```
+
+> **Note** There is some non-trivial logic in the entrypoint that may collide
 with mounting volumes to paths directly inside 
 `/home/jovyan/training_rl`. If you want to do that, 
 the easiest way is to override the entrypoint or to mount somewhere else
