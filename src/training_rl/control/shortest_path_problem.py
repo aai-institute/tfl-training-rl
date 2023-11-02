@@ -14,7 +14,7 @@ def create_shortest_path_graph() -> nx.DiGraph:
         ("A", "C", 5),
         ("A", "D", 3),
         ("B", "D", 9),
-        ("B", "E", 6),
+        ("B", "E", 1),
         ("C", "F", 2),
         ("D", "F", 5),
         ("D", "G", 8),
