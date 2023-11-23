@@ -98,4 +98,5 @@ RUN pip install --no-cache-dir dist/*.whl
 
 RUN ipython kernel install --name "tfl-training-rl" --user
 
-RUN jupyter trust notebooks
+RUN find notebooks -name '*.ipynb' -exec jupyter trust {} \;
+
