@@ -199,7 +199,7 @@ def create_combined_minari_dataset(
     env_name: str,
     dataset_names: Tuple[str, ...] = ("data", "data"),
     dataset_identifiers: Tuple[str, ...] = ("", ""),
-    num_colected_points: Tuple[int, ...] = (1000, 1000),
+    num_collected_points: Tuple[int, ...] = (1000, 1000),
     behavior_policy_names: Tuple[BehaviorPolicyType, ...] = (
         BehaviorPolicyType.random,
         BehaviorPolicyType.random,
@@ -211,7 +211,7 @@ def create_combined_minari_dataset(
     collected_dataset_names = []
 
     for dataset_name, dataset_identifier, num_points, behavior_policy in zip(
-        dataset_names, dataset_identifiers, num_colected_points, behavior_policy_names
+        dataset_names, dataset_identifiers, num_collected_points, behavior_policy_names
     ):
         dataset_config = create_minari_datasets(
             env_name=env_name,
@@ -239,7 +239,7 @@ def create_combined_minari_dataset(
         f"in the combined dataset: {len(combined_dataset)}"
     )
 
-    total_num_steps = int(np.sum(num_colected_points))
+    total_num_steps = int(np.sum(num_collected_points))
 
     # Create metadata for the combined dataset (we can reuse the metadata of set 0 for simplicity)
     minari_combined_dataset_config = MinariDatasetConfig.load_from_file(collected_dataset_names[0])

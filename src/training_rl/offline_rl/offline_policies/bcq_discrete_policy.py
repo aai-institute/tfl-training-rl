@@ -2,21 +2,21 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import gymnasium as gym
 import numpy as np
-import torch
-from torch import nn
-
 import tianshou.utils.net.discrete
+import torch
 from tianshou.policy import DiscreteBCQPolicy
 from tianshou.utils.net.common import ActorCritic
+from torch import nn
+
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
-    "lr": 0.001,
+    "lr": 0.01,
     "gamma": 0.99,
     "n_step": 10,
     "target_update_freq": 100,
-    "eps_test": 0.01,
-    "unlikely_action_threshold": 0.8,  # as lower better result but o.o.d. actions
+    "eps_test": 0.001,
+    "unlikely_action_threshold": 0.3,  # as lower better result but o.o.d. actions
     "imitation_logits_penalty": 0.001,  # 0.001
 }
 

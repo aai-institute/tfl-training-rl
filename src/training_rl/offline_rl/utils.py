@@ -10,7 +10,6 @@ import numpy as np
 import torch
 from minari import EpisodeData
 from minari.storage import get_dataset_path
-
 from tianshou.data import Batch, ReplayBuffer
 
 
@@ -44,7 +43,7 @@ def state_action_histogram(
     state_action_count: Dict[Any, int],
     title: str = None,
     normalized=True,
-    inset_pos_xy: Optional[None] = None,
+    inset_pos_xy: Optional[tuple] = None,
 ):
     keys = list(state_action_count.keys())
     values = list(state_action_count.values())

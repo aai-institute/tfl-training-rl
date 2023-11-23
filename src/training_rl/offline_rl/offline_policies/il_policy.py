@@ -3,9 +3,9 @@ from typing import Any, Dict, Optional, Tuple, Union
 import gymnasium as gym
 import numpy as np
 import torch
+from tianshou.policy import ImitationPolicy
 from torch import nn
 
-from tianshou.policy import ImitationPolicy
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
@@ -61,6 +61,6 @@ def create_il_policy_from_dict(
 
     net = DQNVector(observation_shape, action_shape, device=device).to(device)
     optim = torch.optim.Adam(net.parameters(), lr=policy_config["lr"])
-    policy = ImitationPolicy(actor=net, optim=optim, action_space=action_space)
+    policy = ImitationPolicy(model=net, optim=optim, action_space=action_space)
 
     return policy
