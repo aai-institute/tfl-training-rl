@@ -10,14 +10,14 @@ from training_rl.offline_rl.online_trainings.online_training import \
 
 load_env_variables()
 
+# Choose a collected dataset in /offline_rl/data/offline_data/your_dataset
 NAME_EXPERT_DATA = (
-    # "Grid_2D_8x8_discrete-data_vertical_object_8x8_start_0_0_target_0_7-v0"
-    "Grid_2D_8x8_continuous-data_vertical_object_8x8_start_0_0_target_0_7-v0"
+    "Grid_2D_8x8_discrete-data_door_object_8x8_start_0_0_target_4_7_random-v0"
 )
 # "relocate-cloned-v1"
 # "Grid_2D_8x8_discrete-combined_data_set-V0"
-POLICY_NAME = PolicyName.ppo
-POLICY_TYPE = PolicyType.onpolicy
+POLICY_NAME = PolicyName.dqn
+POLICY_TYPE = PolicyType.offpolicy
 
 NUM_EPOCHS = 1
 BATCH_SIZE = 64

@@ -61,6 +61,6 @@ def create_il_policy_from_dict(
 
     net = DQNVector(observation_shape, action_shape, device=device).to(device)
     optim = torch.optim.Adam(net.parameters(), lr=policy_config["lr"])
-    policy = ImitationPolicy(model=net, optim=optim, action_space=action_space)
+    policy = ImitationPolicy(actor=net, optim=optim, action_space=action_space)
 
     return policy

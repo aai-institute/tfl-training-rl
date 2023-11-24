@@ -85,9 +85,11 @@ def create_policy(policy_config: TrainedPolicyConfig, env: gym.Env) -> BasePolic
 
 def offline_training(
     offline_policy_config: TrainedPolicyConfig,
+    step_per_epoch,
+    step_per_collect=1,
     num_epochs=1,
     batch_size=64,
-    update_per_epoch=20,
+    update_per_step=1,
     number_test_envs=1,
     exploration_noise=True,
     restore_training=False,
@@ -97,11 +99,15 @@ def offline_training(
     offline policy training with a Minari dataset. The policy could be one of the ones you can find in
     /offline_policies/policy_registry.py .
 
+    :param step_per_epoch: the number of transitions collected per epoch.
+    :param step_per_collect: the number of transitions the collector would collect before the network
+        update, i.e., trainer will collect "step_per_collect" transitions and do some policy network update
+        repeatedly in each epoch.
     :param offline_policy_config: an object of type TrainedPolicyConfig with all the necessary info for the training.
     :param num_epochs:
     :param batch_size: the batch size of sample data, which is going to feed in
         the policy network
-    :param update_per_epoch: the number of policy network updates, so-called
+    :param update_per_step: the number of policy network updates, so-called
         gradient steps, per epoch
     :param number_test_envs: the number of test_envs used to test the performance of the policy during training
     :param exploration_noise:
@@ -148,7 +154,13 @@ def offline_training(
         buffer=data_buffer,
         test_collector=test_collector,
         max_epoch=num_epochs,
-        update_per_epoch=1.0,
+
+        ### TODO: CHANGE IT
+
+        step_per_epoch=step_per_epoch,
+        step_per_collect=step_per_collect,
+        update_per_step=update_per_step,
+
         episode_per_test=number_test_envs,
         batch_size=batch_size,
         stop_fn=stop_fn,

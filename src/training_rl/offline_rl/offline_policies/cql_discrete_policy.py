@@ -9,7 +9,7 @@ from training_rl.offline_rl.offline_policies.il_policy import DQNVector
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
-    "lr": 0.00001,  # 6.25e-5
+    "lr": 0.0001,
     "gamma": 0.99,
     "n_step": 5,
     "target_update_freq": 50,

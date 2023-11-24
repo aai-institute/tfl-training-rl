@@ -5,6 +5,7 @@ import torch
 
 from training_rl.offline_rl.custom_envs.utils import \
     InitialConfigCustom2DGridEnvWrapper
+from training_rl.offline_rl.load_env_variables import load_env_variables
 from training_rl.offline_rl.offline_policies.policy_registry import PolicyName
 from training_rl.offline_rl.offline_trainings.policy_config_data_class import (
     TrainedPolicyConfig, get_trained_policy_path)
@@ -16,9 +17,13 @@ from training_rl.offline_rl.utils import (compare_state_action_histograms,
                                           load_buffer_minari,
                                           state_action_histogram)
 
-NAME_EXPERT_DATA = "Grid_2D_8x8_discrete-data_obst_free_8x8_start_0_0_target_7_7-v0"
+load_env_variables()
+
+# choose your dataset name in /trained_models_data/your_data_set
+NAME_EXPERT_DATA = "Grid_2D_8x8_discrete-_stiching-v0"
 # "Ant-v2-data-v0"
-POLICY_NAME = PolicyName.imitation_learning
+# one of the trained policy in /trained_models_data/your_data_set
+POLICY_NAME = PolicyName.bcq_discrete
 NUM_EPISODES = 200  # as more the more precise the statistics
 POLICY_FILE = "policy.pth"
 EXPLORATION_NOISE = True
