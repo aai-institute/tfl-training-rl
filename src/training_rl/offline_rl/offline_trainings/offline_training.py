@@ -154,13 +154,9 @@ def offline_training(
         buffer=data_buffer,
         test_collector=test_collector,
         max_epoch=num_epochs,
-
-        ### TODO: CHANGE IT
-
         step_per_epoch=step_per_epoch,
         step_per_collect=step_per_collect,
         update_per_step=update_per_step,
-
         episode_per_test=number_test_envs,
         batch_size=batch_size,
         stop_fn=stop_fn,
