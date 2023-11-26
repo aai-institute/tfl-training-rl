@@ -39,7 +39,7 @@ virtualenv = [
     { version = "^20.4.3,!=20.4.5,!=20.4.6" },
     { version = "<20.16.4", markers = "sys_platform == 'win32'" },
 ]
-tianshou = {git = "https://github.com/thu-ml/tianshou.git", rev = "master"}
+tianshou = {git = "https://github.com/thu-ml/tianshou.git", rev = "8d3d1f1"}
 
 [tool.poetry.group.add1]
 optional = true
