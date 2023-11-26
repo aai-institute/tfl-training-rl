@@ -1,19 +1,19 @@
 from typing import Any, Dict
 
 import gymnasium as gym
-import torch
-
 import tianshou
+import torch
 from tianshou.utils.net.common import Net
+
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
-    "lr": 0.0001,
+    "lr": 0.001,
     "gamma": 0.99,
     "device": "cpu",
     "hidden_sizes": [256, 256, 256],
     "n_steps": 3,
-    "target_freq": 500,
+    "target_freq": 50,
     "epsilon": 1.0,  # exploration noise
 }
 

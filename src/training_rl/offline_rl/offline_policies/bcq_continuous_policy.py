@@ -2,10 +2,10 @@ from typing import Any, Dict
 
 import gymnasium as gym
 import torch
-
 from tianshou.policy import BCQPolicy
 from tianshou.utils.net.common import MLP, Net
 from tianshou.utils.net.continuous import VAE, Critic, Perturbation
+
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {

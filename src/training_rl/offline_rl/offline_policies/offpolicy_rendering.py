@@ -7,9 +7,9 @@ import numpy as np
 import pygame
 import torch
 from matplotlib import pyplot as plt
-
 from tianshou.data import Batch
 from tianshou.policy import BasePolicy, ImitationPolicy
+
 from training_rl.offline_rl.behavior_policies.behavior_policy_registry import (
     BehaviorPolicyRestorationConfigFactoryRegistry, BehaviorPolicyType)
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \

@@ -2,12 +2,12 @@ from typing import Any, Dict
 
 import gymnasium as gym
 import numpy as np
-import torch
-
 import tianshou
+import torch
 from tianshou.policy import CQLPolicy
 from tianshou.utils.net.common import Net
 from tianshou.utils.net.continuous import ActorProb
+
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {

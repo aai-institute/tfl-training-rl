@@ -3,9 +3,9 @@ from typing import Any, Dict, Optional, Tuple, Union
 import gymnasium as gym
 import numpy as np
 import torch
+from tianshou.policy import ImitationPolicy
 from torch import nn
 
-from tianshou.policy import ImitationPolicy
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {

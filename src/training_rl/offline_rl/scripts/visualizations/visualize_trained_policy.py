@@ -19,13 +19,13 @@ from training_rl.offline_rl.offline_trainings.restore_policy_model import \
 load_env_variables()
 
 NAME_EXPERT_DATA = (
-    "Grid_2D_8x8_discrete-data_verical_object_8x8_start_0_0_target_0_7move_around_obstacle-v0"
+    "Grid_2D_8x8_discrete-_stiching-v0"
 )
 # "pen-cloned-v1"#"relocate-cloned-v1"
-POLICY_TYPE = PolicyName.dqn
+POLICY_TYPE = PolicyName.bcq_discrete
 EXPLORATION_NOISE = False
 EXPLORATION_EPSILON = 0.01
-POLICY_NAME = "policy_final.pth"
+POLICY_NAME = "policy_best_reward.pth"
 
 offline_policy_config = TrainedPolicyConfig(
     name_expert_data=NAME_EXPERT_DATA,
@@ -69,7 +69,3 @@ offpolicy_rendering(
     env_2d_grid_initial_config=env_config,
     num_frames=1000,
 )
-
-# ToDo: Open issue in Minari as rendering is not working properly
-# final_collector = Collector(policy, env, exploration_noise=EXPLORATION_NOISE)
-# final_collector.collect(n_episode=20, render=1 / 35)

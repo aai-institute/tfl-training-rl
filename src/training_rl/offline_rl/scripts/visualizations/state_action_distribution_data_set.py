@@ -6,12 +6,15 @@ from training_rl.offline_rl.custom_envs.utils import \
     InitialConfigCustom2DGridEnvWrapper
 from training_rl.offline_rl.generate_custom_minari_datasets.generate_minari_dataset_grid_envs import \
     MinariDatasetConfig
+from training_rl.offline_rl.load_env_variables import load_env_variables
 from training_rl.offline_rl.scripts.visualizations.utils import (
     get_state_action_data_and_policy_grid_distributions, snapshot_env)
 from training_rl.offline_rl.utils import (load_buffer_minari,
                                           state_action_histogram)
 
-NAME_EXPERT_DATA = "Grid_2D_8x8_discrete-combined_data_sets_A_B-V0"
+load_env_variables()
+
+NAME_EXPERT_DATA = "Grid_2D_8x8_continuous-data_vertical_object_8x8_start_0_0_target_0_7-v0"
 ENV_NAME = CustomEnv.Grid_2D_8x8_discrete
 ENV_RENDER_MODE = RenderMode.RGB_ARRAY_LIST  # Only for snapshot of environment
 

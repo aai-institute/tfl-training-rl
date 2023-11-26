@@ -1,10 +1,10 @@
 import os
 
 import torch
-
 from tianshou.data import Collector, ReplayBuffer, VectorReplayBuffer
 from tianshou.trainer import OffpolicyTrainer, OnpolicyTrainer
 from tianshou.utils import TensorboardLogger
+
 from training_rl.offline_rl.offline_policies.policy_registry import PolicyType
 from training_rl.offline_rl.offline_trainings.custom_tensorboard_callbacks import \
     CustomSummaryWriter

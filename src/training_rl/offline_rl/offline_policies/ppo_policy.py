@@ -3,13 +3,13 @@ from typing import Any, Dict
 import gymnasium as gym
 import numpy as np
 import torch
+from tianshou.policy import PPOPolicy
+from tianshou.utils.net.common import ActorCritic, Net
+from tianshou.utils.net.continuous import ActorProb, Critic
 from torch import nn
 from torch.distributions import Independent, Normal
 from torch.optim.lr_scheduler import LambdaLR
 
-from tianshou.policy import PPOPolicy
-from tianshou.utils.net.common import ActorCritic, Net
-from tianshou.utils.net.continuous import ActorProb, Critic
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
