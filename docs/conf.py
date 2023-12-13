@@ -141,7 +141,7 @@ project = "training_rl"
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-version = pkg_resources.get_distribution(project).version
+version = "0.1.0"
 release = version
 # The short X.Y version.
 major_v, minor_v = version.split(".")[:2]
