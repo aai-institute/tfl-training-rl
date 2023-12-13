@@ -7,7 +7,7 @@ from training_rl.offline_rl.custom_envs.utils import \
 from training_rl.offline_rl.generate_custom_minari_datasets.generate_minari_dataset_grid_envs import \
     MinariDatasetConfig
 from training_rl.offline_rl.load_env_variables import load_env_variables
-from training_rl.offline_rl.scripts.visualizations.utils import (
+from scripts.visualizations.utils import (
     get_state_action_data_and_policy_grid_distributions, snapshot_env)
 from training_rl.offline_rl.utils import (load_buffer_minari,
                                           state_action_histogram)
