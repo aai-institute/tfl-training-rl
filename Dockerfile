@@ -9,8 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     POETRY_VERSION=$POETRY_VERSION \
-    #POETRY_HOME="/opt/poetry" \
-    POETRY_HOME="/home/jovyan/.local/bin"\
+    POETRY_HOME="/opt/poetry" \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
@@ -21,7 +20,6 @@ ENV PATH="${POETRY_HOME}/bin:$PATH"
 USER root
 
 RUN curl -sSL https://install.python-poetry.org | python -
-RUN echo 'export PATH="${POETRY_HOME}/bin:$PATH"' >> /root/.bashrc
 
 USER ${NB_UID}
 
