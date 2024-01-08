@@ -91,7 +91,7 @@ WORKDIR "${HOME}"
 COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 
 # Move to the code dir to install dependencies as the CODE_DIR contains the
-# complete code base, including the poetry.lock file 
+# complete code base, including the poetry.lock file
 WORKDIR $CODE_DIR
 
 RUN pip install --no-cache-dir dist/*.whl
