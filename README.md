@@ -26,7 +26,7 @@ There are multiple ways of viewing/executing the content.
    Then, install the dependencies and the package with
 
    ```shell
-   poetry install --with=add1,add2,control,offline
+   python poetry_install.py
    bash build_scripts/install_presentation_requirements.sh
    ```
 

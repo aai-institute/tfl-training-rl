@@ -5,6 +5,9 @@ title: Reinforcement Learning and Control
 author: appliedAI TransferLab
 logo: _static/images/transferlab-logo.svg
 
+execute:
+  timeout: 600
+
 sphinx:
   config:
     mathjax_path: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

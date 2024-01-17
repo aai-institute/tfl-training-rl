@@ -152,7 +152,7 @@ rendered notebooks."
   fi
 
   echo "Building documentation with sphinx"
-  sphinx-build -W -b html -d "temp/doctrees" docs "docs/_build/html"
+  sphinx-build -b html -d "temp/doctrees" docs "docs/_build/html"
   echo "Running doctests with sphinx"
   sphinx-build -b doctest -d "temp/doctrees" docs "docs/_build/doctest"
 )

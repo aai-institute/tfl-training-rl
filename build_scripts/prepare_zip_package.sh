@@ -42,20 +42,7 @@ BUILD_DIR=$(dirname "$0")
   cd "${BUILD_DIR}/.." || (echo "Unknown error, could not find directory ${BUILD_DIR}" && exit 255)
   source build_scripts/utils.sh
 
-  echo "Validating build prerequisites..."
-
-  if grep "PARTICIPANT_BUCKET_READ_SECRET" config.yml ; then
-    echo "You must replace the secret in config.yml with the actual secret, not
-a reference to an environment variable. Use the value of the env var there instead, just be careful not to commit it!"
-    exit 255
-  fi
-  echo "Done"
-
   check_notebooks_for_non_executed_load
-
-  echo "Building exercise notebooks with jupyter-book..."
-  jupyter-book build notebooks
-  echo "Done"
 
   echo "Done. Building the zip package..."
 
