@@ -56,7 +56,7 @@ USER root
 
 # pandoc needed for docs, see https://nbsphinx.readthedocs.io/en/0.7.1/installation.html?highlight=pandoc#pandoc
 # gh-pages action uses rsync
-# opengl and ffmpeg needed for rendering envs
+# opengl and ffmpeg needed for rendering envs. These packages are needed for torcs and mujoco.
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
     pandoc git-lfs rsync ffmpeg x11-xserver-utils patchelf libglew-dev  \
@@ -81,14 +81,12 @@ COPY --chown=${NB_UID}:${NB_GID} build_scripts ./build_scripts
 RUN bash build_scripts/install_presentation_requirements.sh
 
 
-# Mujoco
+# Install Mujoco
 WORKDIR ${CODE_DIR}
-
 RUN mkdir -p ${CODE_DIR}/.mujoco
 RUN wget https://mujoco.org/download/mujoco210-linux-x86_64.tar.gz -O mujoco.tar.gz
 RUN tar -xf mujoco.tar.gz -C ${CODE_DIR}/.mujoco
 RUN rm mujoco.tar.gz
-
 RUN chmod -R a+rx ${CODE_DIR}/.mujoco
 
 
@@ -108,10 +106,9 @@ WORKDIR "${HOME}"
 
 COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 
-
+# Build c++ mujoco project.
 USER root
 WORKDIR "$CODE_DIR"/torcs
-
 ENV CFLAGS="-fPIC"
 ENV CPPFLAGS=$CFLAGS
 ENV CXXFLAGS=$CFLAGS
@@ -122,8 +119,6 @@ RUN make install && make datainstall
 
 ENV TORCS_DIR "$HOME/tfl-training-rl/torcs/BUILD/bin"
 RUN echo "export PATH=\"\$PATH:$TORCS_DIR\"" >> ~/.bashrc
-#RUN chmod +x "/home/jovyan/tfl-training-rl/src/training_rl/offline_rl/custom_envs/gym_torcs/autostart.sh"
-#RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin" >> ~/.bashrc
 RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${HOME}/.mujoco/mujoco210/bin" >> ~/.bashrc
 RUN mv ${CODE_DIR}/.mujoco ${HOME}/
 
