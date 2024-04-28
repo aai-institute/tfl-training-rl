@@ -58,40 +58,78 @@ USER root
 # gh-pages action uses rsync
 # opengl and ffmpeg needed for rendering envs
 RUN apt-get update \
-    && apt-get -y --no-install-recommends install pandoc git-lfs rsync ffmpeg x11-xserver-utils \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get -y --no-install-recommends install \
+    pandoc git-lfs rsync ffmpeg x11-xserver-utils patchelf libglew-dev  \
+    make g++ gdb libglib2.0-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev  \
+    libplib-dev libopenal-dev libalut-dev libxi-dev libxmu-dev libosmesa6-dev \
+    libxrender-dev libxrandr-dev libpng-dev libxxf86vm-dev libvorbis-dev xautomation\
+    && rm -rf /var/lib/apt/lists/* \
+
+RUN touch ~/.Xauthority
 
 USER ${NB_UID}
 
 WORKDIR ${CODE_DIR}
 
-# Copy virtual environment from base image
+## Copy virtual environment from base image
 COPY --from=BASE ${CODE_DIR}/.venv ${CODE_DIR}/.venv
-# Copy built package from base image
+## Copy built package from base image
 COPY --from=BASE ${CODE_DIR}/dist ${CODE_DIR}/dist
 
-# This goes directly into main jupyter, not poetry env
+## This goes directly into main jupyter, not poetry env
 COPY --chown=${NB_UID}:${NB_GID} build_scripts ./build_scripts
 RUN bash build_scripts/install_presentation_requirements.sh
 
-# Start of HACK: the home directory is overwritten by a mount when a jhub server is started off this image
-# Thus, we create a jovyan-owned directory to which we copy the code and then move it to the home dir as part
-# of the entrypoint
-COPY --chown=${NB_UID}:${NB_GID} entrypoint.sh $CODE_DIR
 
+# Mujoco
+WORKDIR ${CODE_DIR}
+
+RUN mkdir -p ${CODE_DIR}/.mujoco
+RUN wget https://mujoco.org/download/mujoco210-linux-x86_64.tar.gz -O mujoco.tar.gz
+RUN tar -xf mujoco.tar.gz -C ${CODE_DIR}/.mujoco
+RUN rm mujoco.tar.gz
+
+RUN chmod -R a+rx ${CODE_DIR}/.mujoco
+
+
+## Start of HACK: the home directory is overwritten by a mount when a jhub server is started off this image
+## Thus, we create a jovyan-owned directory to which we copy the code and then move it to the home dir as part
+## of the entrypoint
+COPY --chown=${NB_UID}:${NB_GID} entrypoint.sh $CODE_DIR
 RUN chmod +x "${CODE_DIR}/"entrypoint.sh
-# Unfortunately, we cannot use ${CODE_DIR} in the ENTRYPOINT directive, so we have to hardcode it
-# Keep in sync with the value of CODE_DIR above
+
+## Unfortunately, we cannot use ${CODE_DIR} in the ENTRYPOINT directive, so we have to hardcode it
+## Keep in sync with the value of CODE_DIR above
 ENTRYPOINT ["/tmp/code/entrypoint.sh"]
 
-# End of HACK
+## End of HACK
 
 WORKDIR "${HOME}"
 
 COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 
-# Move to the code dir to install dependencies as the CODE_DIR contains the
-# complete code base, including the poetry.lock file
+
+USER root
+WORKDIR "$CODE_DIR"/torcs
+
+ENV CFLAGS="-fPIC"
+ENV CPPFLAGS=$CFLAGS
+ENV CXXFLAGS=$CFLAGS
+RUN make clean
+RUN ./configure --prefix=$(pwd)/BUILD
+RUN make
+RUN make install && make datainstall
+
+ENV TORCS_DIR "$HOME/tfl-training-rl/torcs/BUILD/bin"
+RUN echo "export PATH=\"\$PATH:$TORCS_DIR\"" >> ~/.bashrc
+#RUN chmod +x "/home/jovyan/tfl-training-rl/src/training_rl/offline_rl/custom_envs/gym_torcs/autostart.sh"
+#RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin" >> ~/.bashrc
+RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${HOME}/.mujoco/mujoco210/bin" >> ~/.bashrc
+RUN mv ${CODE_DIR}/.mujoco ${HOME}/
+
+
+## Move to the code dir to install dependencies as the CODE_DIR contains the
+## complete code base, including the poetry.lock file
 WORKDIR $CODE_DIR
 
 RUN pip install --no-cache-dir dist/*.whl
