@@ -42,6 +42,7 @@ virtualenv = [
     { version = "^20.4.3,!=20.4.5,!=20.4.6" },
     { version = "<20.16.4", markers = "sys_platform == 'win32'" },
 ]
+mujoco-py = "^2.1.2.14"
 
 [tool.poetry.group.add1]
 optional = true
@@ -84,6 +85,9 @@ minari = "^0.4.2"
 opencv-python="*"
 pygame = "*"
 tensorboardX="*"
+mujoco-py="^2.1.2.14"
+cython="^0.29.37"
+gym="*"
 
 
 [tool.poetry.group.dev]
