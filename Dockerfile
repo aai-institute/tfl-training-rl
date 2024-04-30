@@ -115,7 +115,8 @@ ENV CXXFLAGS=$CFLAGS
 RUN make clean
 RUN ./configure --prefix=$(pwd)/BUILD
 RUN make
-RUN make install && make datainstall
+RUN make install
+RUN make datainstall
 
 ENV TORCS_DIR "$HOME/tfl-training-rl/torcs/BUILD/bin"
 RUN echo "export PATH=\"\$PATH:$TORCS_DIR\"" >> ~/.bashrc

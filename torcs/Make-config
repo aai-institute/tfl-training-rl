@@ -22,7 +22,7 @@ SHELL = /bin/bash
 srcdir = .
 top_srcdir = ${TORCS_BASE}
 
-prefix = /home/ivan/Documents/GIT_PROJECTS/tfl-training-rl/torcs/BUILD
+prefix = /home/ivan/Documents/GIT_PROJECTS/training_rl_new_test/tfl-training-rl/torcs/BUILD
 exec_prefix = ${prefix}
 
 bindir = ${exec_prefix}/bin

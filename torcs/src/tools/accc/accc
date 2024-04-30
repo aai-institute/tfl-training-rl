@@ -18,7 +18,7 @@
 #
 ##############################################################################
 
-prefix=/home/ivan/Documents/GIT_PROJECTS/tfl-training-rl/torcs/BUILD
+prefix=/home/ivan/Documents/GIT_PROJECTS/training_rl_new_test/tfl-training-rl/torcs/BUILD
 exec_prefix=${prefix}
 
 BINDIR=${exec_prefix}/bin
