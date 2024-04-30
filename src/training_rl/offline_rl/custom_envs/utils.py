@@ -2,12 +2,14 @@ from dataclasses import dataclass
 from typing import Tuple
 
 import gymnasium as gym
+import numpy as np
 from gymnasium import Wrapper
 
 from training_rl.offline_rl.custom_envs.custom_2d_grid_env.obstacles_2D_grid_register import \
     ObstacleTypes
 from training_rl.offline_rl.custom_envs.custom_2d_grid_env.simple_grid import \
     Custom2DGridEnv
+from training_rl.offline_rl.custom_envs.gym_torcs.gym_torcs import TorcsEnv
 
 
 @dataclass
@@ -49,3 +51,38 @@ class InitialConfigCustom2DGridEnvWrapper(Wrapper, gym.utils.RecordConstructorAr
                 target_state = env_config.target_state
                 if target_state is not None:
                     self.env.set_goal_point(target_state)
+
+
+
+'''
+class TorcsLidarEnvWrapper(Wrapper, gym.utils.RecordConstructorArgs):
+
+    def __init__(self, env: TorcsEnv, kwargs: dict = None):
+        super(TorcsLidarEnvWrapper, self).__init__(env)
+        self.observation_space = gym.spaces.Box(low=-1.0, high=1.0, shape=(19,), dtype=np.float32)
+
+    @staticmethod
+    def _preprocess_observation(observation):
+        preprocessed_observation = np.array([lidar for lidar in observation["track"]])
+        return preprocessed_observation
+
+    def reset(self, **kwargs):
+        # Reset the environment and preprocess the initial observation
+        observation, info = self.env.reset(**kwargs)
+        self._raw_observation = observation
+        preprocessed_observation = self._preprocess_observation(observation)
+        return preprocessed_observation, info
+
+    def step(self, action):
+        # Take a step in the environment and preprocess the observation
+        action = np.clip(action, -0.1, 0.1)
+        observation, reward, done, truncations, info = self.env.step(action)
+        self._raw_observation = observation
+        preprocessed_observation = self._preprocess_observation(observation)
+        return preprocessed_observation, reward, done, truncations, info
+
+    @property
+    def raw_observation(self):
+        return self._raw_observation
+
+'''

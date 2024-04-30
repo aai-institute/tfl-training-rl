@@ -60,6 +60,7 @@ def create_il_policy_from_dict(
     device = "cpu"
 
     net = DQNVector(observation_shape, action_shape, device=device).to(device)
+
     optim = torch.optim.Adam(net.parameters(), lr=policy_config["lr"])
     policy = ImitationPolicy(actor=net, optim=optim, action_space=action_space)
 

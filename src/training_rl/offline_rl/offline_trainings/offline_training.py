@@ -11,9 +11,7 @@ from tianshou.trainer import OfflineTrainer
 from tianshou.utils import TensorboardLogger
 
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
-    register_grid_envs
-from training_rl.offline_rl.custom_envs.utils import \
-    InitialConfigCustom2DGridEnvWrapper
+    register_grid_envs, EnvFactory
 from training_rl.offline_rl.offline_policies.policy_registry import \
     PolicyFactoryRegistry
 from training_rl.offline_rl.offline_trainings.custom_tensorboard_callbacks import \
@@ -42,29 +40,26 @@ def get_environments(
     render_mode = policy_config.render_mode
     env_config = policy_config.minari_dataset_config.initial_config_2d_grid_env
 
-    env = InitialConfigCustom2DGridEnvWrapper(
-        gym.make(env_name, render_mode=render_mode), env_config=env_config
-    )
+    if env_name in EnvFactory.__members__:
+        env = EnvFactory[env_name].get_env(render_mode=render_mode, grid_config=env_config)
+    else:
+        env = gym.make(env_name, render_mode=render_mode)
 
     test_envs = train_envs = None
 
     if number_test_envs is not None:
         test_envs = SubprocVectorEnv(
             [
-                lambda: InitialConfigCustom2DGridEnvWrapper(
-                    gym.make(env_name), env_config=env_config
-                )
-                for _ in range(number_test_envs)
+                lambda: EnvFactory[env_name].get_env(grid_config=env_config) if env_name in EnvFactory.__members__ else
+                gym.make(env_name) for _ in range(number_test_envs)
             ]
         )
 
     if number_train_envs is not None:
         train_envs = SubprocVectorEnv(
             [
-                lambda: InitialConfigCustom2DGridEnvWrapper(
-                    gym.make(env_name), env_config=env_config
-                )
-                for _ in range(number_train_envs)
+                lambda: EnvFactory[env_name].get_env(grid_config=env_config) if env_name in EnvFactory.__members__ else
+                gym.make(env_name) for _ in range(number_train_envs)
             ]
         )
 
@@ -94,6 +89,8 @@ def offline_training(
     exploration_noise=True,
     restore_training=False,
     seed=None,
+    policy_name: str | None = None,
+    test_in_train: bool = True,
 ):
     """
     offline policy training with a Minari dataset. The policy could be one of the ones you can find in
@@ -113,6 +110,8 @@ def offline_training(
     :param exploration_noise:
     :param restore_training:
     :param seed:
+    :param policy_name: the name of the policy to be saved
+    :param test_in_train: whether to test in the training phase.
     :return:
     """
     setup_random_seed(seed)
@@ -122,20 +121,23 @@ def offline_training(
     data_buffer = load_buffer_minari(name_expert_data)
 
     # Path to save models/config
-    policy_name = offline_policy_config.policy_name
-    log_name = os.path.join(name_expert_data, policy_name)
+    offline_policy_name = offline_policy_config.policy_name
+    log_name = os.path.join(name_expert_data, offline_policy_name)
     log_path = get_trained_policy_path(log_name)
 
     # Policy creation/restoration
     policy = create_policy(offline_policy_config, env)
 
     if restore_training:
-        policy_path = os.path.join(log_path, POLICY_NAME)
+        policy_name = policy_name if policy_name is not None else POLICY_NAME
+        policy_path = os.path.join(log_path, policy_name)
         policy.load_state_dict(torch.load(policy_path, map_location=offline_policy_config.device))
         print("Loaded policy from: ", policy_path)
 
     # Create collector for testing
-    test_collector = Collector(policy, test_envs, exploration_noise=exploration_noise)
+    test_collector = None
+    if test_envs is not None:
+        test_collector = Collector(policy, test_envs, exploration_noise=exploration_noise)
 
     def save_best_fn(policy):
         torch.save(policy.state_dict(), os.path.join(log_path, POLICY_NAME_BEST_REWARD))
@@ -162,10 +164,14 @@ def offline_training(
         stop_fn=stop_fn,
         save_best_fn=save_best_fn,
         logger=logger,
+        test_in_train=test_in_train,
     ).run()
 
     # Save final policy
-    torch.save(policy.state_dict(), os.path.join(log_path, POLICY_NAME))
+    policy_name = POLICY_NAME if policy_name is None else policy_name
+    torch.save(policy.state_dict(), os.path.join(log_path, policy_name))
+
+    print("#################### ",  os.path.join(log_path, policy_name))
 
     # Save config
     offline_policy_config.save_to_file()

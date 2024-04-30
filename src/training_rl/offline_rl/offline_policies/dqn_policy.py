@@ -8,12 +8,12 @@ from tianshou.utils.net.common import Net
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
-    "lr": 0.001,
+    "lr": 0.01,
     "gamma": 0.99,
     "device": "cpu",
-    "hidden_sizes": [256, 256, 256],
-    "n_steps": 3,
-    "target_freq": 50,
+    "hidden_sizes": [256, 256],
+    "n_steps": 5,
+    "target_freq": 300,
     "epsilon": 1.0,  # exploration noise
 }
 
@@ -36,6 +36,7 @@ def create_dqn_policy_from_dict(
         state_shape=observation_shape,
         action_shape=action_shape,
         hidden_sizes=policy_config["hidden_sizes"],
+        device=device
     )
     optim = torch.optim.Adam(net.parameters(), lr=policy_config["lr"])
 

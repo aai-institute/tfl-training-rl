@@ -1,11 +1,15 @@
+from training_rl.offline_rl.load_env_variables import load_env_variables
+load_env_variables()
+
 import json
 import os
 from dataclasses import asdict, dataclass
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional, List, Sequence
 
 import gymnasium as gym
 import minari
 import numpy as np
+from gymnasium import Wrapper
 from minari import DataCollectorV0, combine_datasets
 from minari.data_collector.callbacks import StepDataCallback
 from minari.storage import get_dataset_path
@@ -15,7 +19,8 @@ from training_rl.offline_rl.behavior_policies.behavior_policy_registry import (
 from training_rl.offline_rl.custom_envs.custom_2d_grid_env.obstacles_2D_grid_register import \
     ObstacleTypes
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
-    register_grid_envs
+    register_grid_envs, EnvFactory
+from training_rl.offline_rl.custom_envs.gym_torcs.gym_torcs import TorcsEnv, TorcsLidarEnv
 from training_rl.offline_rl.custom_envs.utils import (
     Grid2DInitialConfig, InitialConfigCustom2DGridEnvWrapper)
 from training_rl.offline_rl.generate_custom_minari_datasets.utils import (
@@ -24,7 +29,6 @@ from training_rl.offline_rl.utils import delete_minari_data_if_exists
 
 OVERRIDE_DATA_SET = True
 
-
 @dataclass
 class MinariDatasetConfig:
     env_name: str
@@ -32,6 +36,7 @@ class MinariDatasetConfig:
     num_steps: int
     behavior_policy: BehaviorPolicyType = None
     initial_config_2d_grid_env: Grid2DInitialConfig = None
+    children_dataset_names: List[str] = None
 
     @classmethod
     def from_dict(cls, config_dict: Dict):
@@ -69,7 +74,8 @@ class MinariDatasetConfig:
 
 
 def create_minari_collector_env_wrapper(
-    env_name: str, initial_config_2d_grid_env: Grid2DInitialConfig = None
+    env_name: str,
+    initial_config_2d_grid_env: Grid2DInitialConfig = None,
 ):
     """
     Creates a wrapper 'DataCollectorV0' around the environment in order to collect data for minari dataset
@@ -78,9 +84,10 @@ def create_minari_collector_env_wrapper(
     :param initial_config_2d_grid_env:
     :return:
     """
-    register_grid_envs()
-    env = gym.make(env_name)
-    env = InitialConfigCustom2DGridEnvWrapper(env, env_config=initial_config_2d_grid_env)
+
+    env = EnvFactory[env_name].get_env(
+        grid_config=initial_config_2d_grid_env
+    )
 
     class CustomSubsetStepDataCallback(StepDataCallback):
         def __call__(self, env, **kwargs):
@@ -164,7 +171,8 @@ def create_minari_datasets(
 
     delete_minari_data_if_exists(dataset_config.data_set_name, override_dataset=OVERRIDE_DATA_SET)
     env = create_minari_collector_env_wrapper(
-        dataset_config.env_name, dataset_config.initial_config_2d_grid_env
+        dataset_config.env_name,
+        dataset_config.initial_config_2d_grid_env,
     )
     state, _ = env.reset()
 
@@ -175,10 +183,14 @@ def create_minari_datasets(
         ]
         if dataset_config.behavior_policy == BehaviorPolicyType.random:
             action = env.action_space.sample()
+        elif isinstance(env.unwrapped, TorcsEnv):
+            raw_observation = env.raw_observation
+            action = np.array(behavior_policy(raw_observation, env), dtype=np.float32)
         else:
             action = behavior_policy(state, env)
 
         next_state, reward, done, time_out, info = env.step(action)
+
         num_steps += 1
 
         if done or time_out:
@@ -192,12 +204,16 @@ def create_minari_datasets(
     )
     dataset_config.save_to_file()
 
+    if isinstance(env.unwrapped, TorcsLidarEnv):
+        env.end()
+
     return dataset_config
 
 
+# ToDo: Add a flag to keep or not the single datasets.
 def create_combined_minari_dataset(
     env_name: str,
-    dataset_names: Tuple[str, ...] = ("data", "data"),
+    dataset_names: Tuple[str, ...] = ("data_I", "data_II"),
     dataset_identifiers: Tuple[str, ...] = ("", ""),
     num_collected_points: Tuple[int, ...] = (1000, 1000),
     behavior_policy_names: Tuple[BehaviorPolicyType, ...] = (
@@ -206,12 +222,18 @@ def create_combined_minari_dataset(
     ),
     combined_dataset_identifier: str = "combined_dataset",
     version_dataset: str = "v0",
-    env_2d_grid_initial_config: Grid2DInitialConfig = None,
+    env_2d_grid_initial_config: Grid2DInitialConfig | Sequence[Grid2DInitialConfig] = None,
 ) -> MinariDatasetConfig:
     collected_dataset_names = []
 
-    for dataset_name, dataset_identifier, num_points, behavior_policy in zip(
-        dataset_names, dataset_identifiers, num_collected_points, behavior_policy_names
+    if isinstance(env_2d_grid_initial_config, Grid2DInitialConfig) or env_2d_grid_initial_config is None:
+        env_2d_grid_initial_config = [env_2d_grid_initial_config for _ in range(len(dataset_names))]
+    else:
+        if len(env_2d_grid_initial_config) != len(dataset_names):
+            raise ValueError("env_2d_grid_initial_config must be of same length as dataset_names")
+
+    for dataset_name, dataset_identifier, num_points, behavior_policy, env_2d_grid_initial_config_single in zip(
+        dataset_names, dataset_identifiers, num_collected_points, behavior_policy_names, env_2d_grid_initial_config
     ):
         dataset_config = create_minari_datasets(
             env_name=env_name,
@@ -219,7 +241,7 @@ def create_combined_minari_dataset(
             dataset_identifier=dataset_identifier,
             num_colected_points=num_points,
             behavior_policy_name=behavior_policy,
-            env_2d_grid_initial_config=env_2d_grid_initial_config,
+            env_2d_grid_initial_config=env_2d_grid_initial_config_single,
         )
 
         collected_dataset_names.append(dataset_config.data_set_name)
@@ -246,6 +268,7 @@ def create_combined_minari_dataset(
     minari_combined_dataset_config.num_steps = total_num_steps
     minari_combined_dataset_config.data_set_name = name_combined_dataset
     minari_combined_dataset_config.save_to_file()
+    minari_combined_dataset_config.children_dataset_names = collected_dataset_names
 
     return minari_combined_dataset_config
 

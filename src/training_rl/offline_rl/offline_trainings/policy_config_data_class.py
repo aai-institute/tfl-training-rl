@@ -2,7 +2,7 @@ import json
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Literal
 
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
     RenderMode
@@ -24,16 +24,18 @@ def get_trained_policy_path(dataset_id):
 @dataclass
 class TrainedPolicyConfig:
     policy_name: PolicyName
+    name_expert_data: str | None = None
     render_mode: RenderMode = None
-    name_expert_data: str = None
     minari_dataset_config: MinariDatasetConfig = None
     policy_config: DefaultPolicyConfigFactoryRegistry = None
-    device: str = "cpu"
+    device: Literal["cpu", "cuda"] = "cpu"
 
     def __post_init__(self):
         if self.policy_config is None:
             self.policy_config = DefaultPolicyConfigFactoryRegistry.__dict__[self.policy_name]()
-        self.minari_dataset_config = MinariDatasetConfig.load_from_file(self.name_expert_data)
+            self.policy_config["device"]=self.device
+        if self.name_expert_data:
+            self.minari_dataset_config = MinariDatasetConfig.load_from_file(self.name_expert_data)
 
     @classmethod
     def from_dict(cls, config_dict: Dict):

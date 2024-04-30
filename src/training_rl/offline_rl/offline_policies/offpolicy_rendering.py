@@ -9,11 +9,13 @@ import torch
 from matplotlib import pyplot as plt
 from tianshou.data import Batch
 from tianshou.policy import BasePolicy, ImitationPolicy
+from torch import nn
 
 from training_rl.offline_rl.behavior_policies.behavior_policy_registry import (
     BehaviorPolicyRestorationConfigFactoryRegistry, BehaviorPolicyType)
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
-    RenderMode
+    RenderMode, EnvFactory
+from training_rl.offline_rl.custom_envs.gym_torcs.gym_torcs import TorcsEnv, TorcsLidarEnv
 from training_rl.offline_rl.custom_envs.utils import (
     Grid2DInitialConfig, InitialConfigCustom2DGridEnvWrapper)
 from training_rl.offline_rl.utils import extract_dimension
@@ -58,10 +60,10 @@ def initialize_pygame(title="RL agent animation"):
 
 def offpolicy_rendering(
     env_or_env_name: Union[gym.Env, str],
-    render_mode: RenderMode,
+    render_mode: RenderMode | None = RenderMode.RGB_ARRAY_LIST,
     env_2d_grid_initial_config: Grid2DInitialConfig = None,
     behavior_policy_name: BehaviorPolicyType = None,
-    policy_model: Union[BasePolicy, Callable] = None,
+    policy_model: Union[BasePolicy, Callable, nn.Module] = None,
     num_frames: int = 100,
     imitation_policy_sampling: bool = False,
 ):
@@ -105,12 +107,14 @@ def offpolicy_rendering(
         )
 
     if isinstance(env_or_env_name, str):
-        env = InitialConfigCustom2DGridEnvWrapper(
-            gym.make(env_or_env_name, render_mode=render_mode),
-            env_config=env_2d_grid_initial_config,
-        )
+        env = EnvFactory[env_or_env_name].get_env(render_mode=render_mode, grid_config=env_2d_grid_initial_config)
     else:
         env = env_or_env_name
+
+    # TORCS render mode must be configured from the TORCS api.
+    if isinstance(env.unwrapped, TorcsEnv) or isinstance(env.unwrapped, TorcsLidarEnv):
+        render_mode = None
+
 
     state, _ = env.reset()
 
@@ -127,6 +131,9 @@ def offpolicy_rendering(
 
             if behavior_policy_name == BehaviorPolicyType.random:
                 action = env.action_space.sample()
+            elif isinstance(env.unwrapped, TorcsEnv):
+                raw_observation = env.raw_observation
+                action = np.array(behavior_policy(raw_observation, env), dtype=np.float32)
             else:
                 action = behavior_policy(state, env)
         else:
@@ -145,8 +152,10 @@ def offpolicy_rendering(
                             isinstance(policy_output.act[0], np.ndarray)
                             or isinstance(policy_output.act, np.ndarray)
                         )
-                        else policy_output.act[0].detach().numpy()
+                        else policy_output.act[0].detach().cpu().numpy()
                     )
+            elif isinstance(policy_model, nn.Module):
+                action=policy_model(torch.Tensor(state)).detach().numpy()
             elif isinstance(policy_model, Callable):
                 action = policy_model(state, env)
 
@@ -155,6 +164,8 @@ def offpolicy_rendering(
 
         if render_mode == RenderMode.RGB_ARRAY_LIST:
             render_rgb_frames_pygame(env, screen)
+        elif render_mode == None:
+            pass
         else:
             env.render()
 
@@ -165,3 +176,7 @@ def offpolicy_rendering(
             state = next_state
 
     pygame.quit()
+
+    if isinstance(env.unwrapped, TorcsEnv) or isinstance(env.unwrapped, TorcsLidarEnv):
+        env.end()
+

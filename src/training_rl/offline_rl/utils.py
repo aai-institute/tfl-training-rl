@@ -1,7 +1,7 @@
 import os
 from importlib import resources
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 import gymnasium as gym
 import matplotlib.pyplot as plt
@@ -11,6 +11,12 @@ import torch
 from minari import EpisodeData
 from minari.storage import get_dataset_path
 from tianshou.data import Batch, ReplayBuffer
+import pickle
+import random
+
+from torch.utils.data import Dataset
+from IPython.display import display
+from ipywidgets import widgets
 
 
 def get_tianshou_root():
@@ -43,9 +49,11 @@ def state_action_histogram(
     state_action_count: Dict[Any, int],
     title: str = None,
     normalized=True,
-    inset_pos_xy: Optional[tuple] = None,
+    inset_pos_xy: bool = True,
+    new_keys_for_state_action_count_plot: list[Any] = None,
 ):
-    keys = list(state_action_count.keys())
+    keys = list(state_action_count.keys()) if new_keys_for_state_action_count_plot is None else (
+        new_keys_for_state_action_count_plot)
     values = list(state_action_count.values())
     keys_str = [str(key) if key[1] == 0 else "" for key in keys]
 
@@ -70,10 +78,15 @@ def state_action_histogram(
     else:
         plt.title(title)
 
-    if inset_pos_xy is not None:
+    if inset_pos_xy:
         inset_text = f"state = (x,y) ~ x + y*grid_size  -  action: (0:UP, 1:DOWN, 2:LEFT, 3:RIGHT)"  # Modify this with your desired text
-        inset_x = inset_pos_xy[0]  # Adjust the x-coordinate
-        inset_y = inset_pos_xy[1]  # Adjust the y-coordinate
+
+        plot_height = plt.gca().get_ylim()[1] - plt.gca().get_ylim()[0]  # Calculate the height of the plot
+        relative_distance = -0.95 * plot_height  # Adjust the relative distance (e.g., 10% of plot height)
+
+        inset_x = 115.0  # Adjust the x-coordinate
+        inset_y = min(values) - relative_distance
+
         plt.text(
             inset_x,
             inset_y,
@@ -85,7 +98,7 @@ def state_action_histogram(
     plt.show()
 
 
-def extract_dimension(input: Union[gym.core.ObsType, gym.core.ActType]) -> int:
+def extract_dimension(input: Union["gym.core.ObsType", "gym.core.ActType"]) -> int:
     if isinstance(input, gym.spaces.Discrete):
         n = input.n
     elif isinstance(input, gym.spaces.Box):
@@ -359,3 +372,102 @@ def check_minari_files_exist(file_paths: Union[str, List[str]]) -> None:
     for file_path in file_paths:
         if not os.path.exists(os.path.join(data_set_minari_paths, file_path)):
             raise FileNotFoundError(f"File not found: {file_path}")
+
+
+# ToDo: Improve this part of the code
+def discount_cumsum(x, gamma):
+    disc_cumsum = np.zeros_like(x)
+    disc_cumsum[-1] = x[-1]
+    for t in reversed(range(x.shape[0]-1)):
+        disc_cumsum[t] = x[t] + gamma * disc_cumsum[t+1]
+    return disc_cumsum
+
+
+class D4RLTrajectoryDataset(Dataset):
+    def __init__(self, dataset_path, context_len, rtg_scale):
+
+        self.context_len = context_len
+        self.rtg_scale = rtg_scale
+
+        # load dataset
+        with open(dataset_path, 'rb') as f:
+            self.trajectories = pickle.load(f)
+
+        # calculate min len of traj, state mean and variance
+        # and returns_to_go for all traj
+        min_len = 10 ** 6
+        states = []
+        for traj in self.trajectories:
+            traj_len = traj['observations'].shape[0]
+            min_len = min(min_len, traj_len)
+            states.append(traj['observations'])
+            # calculate returns to go and rescale them
+            traj['returns_to_go'] = discount_cumsum(traj['rewards'], 1.0) / rtg_scale
+
+        # used for input normalization
+        states = np.concatenate(states, axis=0)
+        self.state_mean, self.state_std = np.mean(states, axis=0), np.std(states, axis=0) + 1e-6
+
+        # normalize states
+        for traj in self.trajectories:
+            traj['observations'] = (traj['observations'] - self.state_mean) / self.state_std
+
+    def get_state_stats(self):
+        return self.state_mean, self.state_std
+
+    def __len__(self):
+        return len(self.trajectories)
+
+    def __getitem__(self, idx):
+        traj = self.trajectories[idx]
+        traj_len = traj['observations'].shape[0]
+
+        if traj_len >= self.context_len:
+            # sample random index to slice trajectory
+            si = random.randint(0, traj_len - self.context_len)
+
+            states = torch.from_numpy(traj['observations'][si: si + self.context_len])
+            actions = torch.from_numpy(traj['actions'][si: si + self.context_len])
+            returns_to_go = torch.from_numpy(traj['returns_to_go'][si: si + self.context_len])
+            timesteps = torch.arange(start=si, end=si + self.context_len, step=1)
+
+            # all ones since no padding
+            traj_mask = torch.ones(self.context_len, dtype=torch.long)
+
+        else:
+            padding_len = self.context_len - traj_len
+
+            # padding with zeros
+            states = torch.from_numpy(traj['observations'])
+            states = torch.cat([states,
+                                torch.zeros(([padding_len] + list(states.shape[1:])),
+                                            dtype=states.dtype)],
+                               dim=0)
+
+            actions = torch.from_numpy(traj['actions'])
+            actions = torch.cat([actions,
+                                 torch.zeros(([padding_len] + list(actions.shape[1:])),
+                                             dtype=actions.dtype)],
+                                dim=0)
+
+            returns_to_go = torch.from_numpy(traj['returns_to_go'])
+            returns_to_go = torch.cat([returns_to_go,
+                                       torch.zeros(([padding_len] + list(returns_to_go.shape[1:])),
+                                                   dtype=returns_to_go.dtype)],
+                                      dim=0)
+
+            timesteps = torch.arange(start=0, end=self.context_len, step=1)
+
+            traj_mask = torch.cat([torch.ones(traj_len, dtype=torch.long),
+                                   torch.zeros(padding_len, dtype=torch.long)],
+                                  dim=0)
+
+        return timesteps, states, actions, returns_to_go, traj_mask
+
+
+def widget_list(list_names: List[str]):
+    widget_dropdown = widgets.Dropdown(options=list_names, value=list_names[0])
+    display(widget_dropdown)
+    return widget_dropdown
+
+

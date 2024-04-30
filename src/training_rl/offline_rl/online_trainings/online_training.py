@@ -14,6 +14,10 @@ from training_rl.offline_rl.offline_trainings.policy_config_data_class import (
     TrainedPolicyConfig, get_trained_policy_path)
 
 
+POLICY_NAME_BEST_REWARD = "policy_best_reward_online.pth"
+POLICY_NAME = "policy_online.pth"
+
+
 def online_training(
     trained_policy_config: TrainedPolicyConfig,
     policy_type: PolicyType,
@@ -30,6 +34,7 @@ def online_training(
     frames_stack=1,
     seed=None,
     restore_training=False,
+    policy_model_name="policy.pth"
 ):
     setup_random_seed(seed)
     # Create environments
@@ -76,7 +81,7 @@ def online_training(
     test_collector = Collector(policy, test_envs)
 
     def save_best_fn(policy):
-        torch.save(policy.state_dict(), os.path.join(log_path, "policy.pth"))
+        torch.save(policy.state_dict(), os.path.join(log_path, POLICY_NAME_BEST_REWARD))
 
     def stop_fn(mean_rewards):
         return False
@@ -109,7 +114,8 @@ def online_training(
     ).run()
 
     # Save final policy
-    torch.save(policy.state_dict(), os.path.join(log_path, "policy_final.pth"))
+    policy_model_name = POLICY_NAME if policy_model_name is None else policy_model_name
+    torch.save(policy.state_dict(), os.path.join(log_path, policy_model_name))
 
     # Save config
     trained_policy_config.save_to_file()

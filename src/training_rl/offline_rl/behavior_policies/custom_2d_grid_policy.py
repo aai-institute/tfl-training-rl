@@ -245,3 +245,58 @@ def behavior_policy_8x8_grid_moves_downwards_within_strip_and_left(
         return random.choices(possible_directions, weights=weights)[0]
 
     return random_directions
+
+
+def behavior_policy_8x8_suboptimal_determ_initial_3_0_final_3_7(
+    state: np.ndarray, env: Custom2DGridEnv
+) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    if state_xy[1] == 7:
+        action = 0
+    elif state_xy[0] == 7:
+        action = 3
+    elif 3 <= state_xy[0] <= 7:
+        action = 1
+
+    if not env.discrete_action:
+        return np.eye(env.action_space.shape[0])[action]
+    else:
+        return action
+
+
+def behavior_policy_8x8_suboptimal_rnd_initial_3_0_final_3_7(
+    state: np.ndarray, env: Custom2DGridEnv
+) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    possible_directions = [0, 1, 2, 3]
+    weights = [0.6, 0.6, 0.6, 1.0]
+    action = random.choices(possible_directions, weights=weights)[0]
+    if state_xy[0] <= 3:
+        action = 1
+
+    if not env.discrete_action:
+        return np.eye(env.action_space.shape[0])[action]
+    return action
+
+
+def behavior_policy_8x8_suboptimal_initial_0_0_final_0_7(
+    state: np.ndarray, env: Custom2DGridEnv
+) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+
+    if state_xy[1] == 7:
+        return 0
+    if state_xy[0] < 4:
+        return 1
+    else:
+        return 3
+
+
+# MOVES:
+#   0: (-1, 0),  # UP
+#   1: (1, 0),  # DOWN
+#   2: (0, -1),  # LEFT
+#   3: (0, 1)  # RIGHT

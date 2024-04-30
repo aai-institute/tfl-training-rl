@@ -14,7 +14,7 @@ policy_config = {
     "n_step": 5,
     "target_update_freq": 50,
     "num_quantiles": 20,
-    "min_q_weight": 13.0,
+    "min_q_weight": 5.0,
     "device": "cpu",
 }
 
