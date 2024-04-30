@@ -141,3 +141,6 @@ dmypy.json
 
 # reports
 pylint.html
+
+!torcs/
+!torcs/**
