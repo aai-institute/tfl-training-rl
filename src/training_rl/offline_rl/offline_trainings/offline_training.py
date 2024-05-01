@@ -84,13 +84,14 @@ def offline_training(
     step_per_collect=1,
     num_epochs=1,
     batch_size=64,
-    update_per_step=1,
-    number_test_envs=1,
+    update_per_step=1.0,
+    number_test_envs: int | None = 1,
     exploration_noise=True,
     restore_training=False,
     seed=None,
     policy_name: str | None = None,
     test_in_train: bool = True,
+    episode_per_test: int = 1,
 ):
     """
     offline policy training with a Minari dataset. The policy could be one of the ones you can find in
@@ -112,6 +113,7 @@ def offline_training(
     :param seed:
     :param policy_name: the name of the policy to be saved
     :param test_in_train: whether to test in the training phase.
+    :param episode_per_test: the number of episodes for one policy evaluation test.
     :return:
     """
     setup_random_seed(seed)
@@ -159,7 +161,7 @@ def offline_training(
         step_per_epoch=step_per_epoch,
         step_per_collect=step_per_collect,
         update_per_step=update_per_step,
-        episode_per_test=number_test_envs,
+        episode_per_test=episode_per_test if number_test_envs is not None else None,
         batch_size=batch_size,
         stop_fn=stop_fn,
         save_best_fn=save_best_fn,

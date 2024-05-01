@@ -20,6 +20,8 @@ class CallableEnum(Enum):
     def __call__(self, *args, **kwargs):
         return self.value(*args, **kwargs)
 
+# ToDo: This factory should be refactor soon!
+
 
 class BehaviorPolicyRestorationConfigFactoryRegistry(CallableEnum):
     behavior_8x8_moving_towards_lower_right = behavior_policy_8x8_grid_moving_towards_lower_right
@@ -46,6 +48,7 @@ class BehaviorPolicyRestorationConfigFactoryRegistry(CallableEnum):
     behavior_8x8_suboptimal_determ_initial_3_0_final_3_7 = behavior_policy_8x8_suboptimal_determ_initial_3_0_final_3_7
     behavior_8x8_suboptimal_rnd_initial_3_0_final_3_7 = behavior_policy_8x8_suboptimal_rnd_initial_3_0_final_3_7
     behavior_8x8_suboptimal_initial_0_0_final_0_7 = behavior_policy_8x8_suboptimal_initial_0_0_final_0_7
+
 
 class BehaviorPolicyType(str, Enum):
     behavior_8x8_moving_towards_lower_right = "behavior_8x8_moving_towards_lower_right"

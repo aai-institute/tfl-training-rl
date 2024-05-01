@@ -1,5 +1,7 @@
 import os.path
 import xml.etree.ElementTree as ET
+from itertools import accumulate
+
 import gymnasium as gym
 import numpy as np
 import torch
@@ -12,6 +14,8 @@ from tqdm import tqdm
 
 from training_rl.offline_rl.config import get_offline_rl_abs_path
 from training_rl.offline_rl.custom_envs.custom_envs_registration import EnvFactory
+from training_rl.offline_rl.offline_policies.minimal_GPT_model import DecisionTransformer
+from training_rl.offline_rl.offline_trainings.training_decision_transformer import evaluate_on_env
 from training_rl.offline_rl.utils import extract_dimension, one_hot_to_integer
 
 from training_rl.offline_rl.behavior_policies.behavior_policy_registry import BehaviorPolicyType, \
@@ -208,31 +212,62 @@ def compute_corrected_actions_from_policy_guided(
     return output
 
 
-def update_torcs_display_mode(new_display_mode:Literal["results_only", "normal"] = "normal"):
+# ToDo: Clean this function and add, docs, etc.
 
-    path_to_script = os.path.join(get_offline_rl_abs_path(), "..", "..", '..', 'torcs', 'BUILD',
-                                  'share', 'games', 'torcs', 'config', 'raceman', 'practice.xml')
+def trajectory_cumulative_rewards_plot(
+        env: gym.Env,
+        model: DecisionTransformer,
+        initial_R_0: list[float],
+        trajectories_data: Dict["str", np.ndarray],
+        eval_rtg_scale: float = 1000,
+        num_episodes: int = 1,
+        device: Literal["cpu", "cuda"] = "cpu",
+        context_len: int = 20
+):
+    def find_closest_number_with_index(numbers, n_0):
+        closest_number = min(numbers, key=lambda x: abs(x - n_0))
+        closest_index = numbers.index(closest_number)
+        return closest_number, closest_index
 
+    cumulative_rewards_per_episode = []
+    trajectory_length_per_episode = []
+    for trajectory in trajectories_data:
+        cumulative_rewards_per_episode.append(np.sum(trajectory['rewards']))
+        trajectory_length_per_episode.append(len(trajectory['observations']))
 
-    # Load the XML file
-    tree = ET.parse(path_to_script)
+    _, closest_index = find_closest_number_with_index(cumulative_rewards_per_episode, initial_R_0)
 
-    root = tree.getroot()
+    selected_trajectory = trajectories_data[closest_index]
+    selected_trajectory_length = trajectory_length_per_episode[closest_index]
 
-    # Find the section with name="Practice"
-    practice_section = root.find(".//section[@name='Practice']")
+    cumulative_rewards_in_time = list(accumulate(selected_trajectory["rewards"]))
+    cumulative_rewards_in_time = cumulative_rewards_in_time[::-1]
 
-    # Find the attribute with name="display mode" within the Practice section
-    display_mode_attr = practice_section.find("./attstr[@name='display mode']")
+    results = evaluate_on_env(
+        model,
+        device,
+        context_len,
+        env,
+        initial_R_0,
+        eval_rtg_scale,
+        num_episodes,
+        selected_trajectory_length,
+        render=False,
+    )
 
-    if display_mode_attr is not None:
-        # Update the value of the display mode attribute
-        display_mode_attr.set('val', new_display_mode)
+    cumulative_rewards_per_episode_inference = results['eval/rtg']
 
-        # Save the modified XML back to the file
-        tree.write(path_to_script)
-        print(f"Display mode updated to '{new_display_mode}' in the XML file.")
-    else:
-        print("Attribute 'display mode' not found in the Practice section.")
+    average_cumulative_rewards_inference = np.mean(cumulative_rewards_per_episode_inference, axis=0)
 
+    plt.plot(range(len(cumulative_rewards_in_time)), cumulative_rewards_in_time, color='blue',
+             label='Average Cumulative Rewards from data')
+    plt.plot(range(len(average_cumulative_rewards_inference)), average_cumulative_rewards_inference, color='red',
+             label='Average Cumulative Reward Inference')
+
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel('Time Steps')
+    plt.ylabel('Rewards to go')
+    plt.title(f'Comparison of Rewards to go for initial R_0:{initial_R_0}')
+    plt.show()
 

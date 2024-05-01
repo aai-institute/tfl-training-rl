@@ -4,12 +4,9 @@ load_env_variables()
 import json
 import os
 from dataclasses import asdict, dataclass
-from typing import Dict, Tuple, Optional, List, Sequence
-
-import gymnasium as gym
+from typing import Dict, Tuple, List, Sequence
 import minari
 import numpy as np
-from gymnasium import Wrapper
 from minari import DataCollectorV0, combine_datasets
 from minari.data_collector.callbacks import StepDataCallback
 from minari.storage import get_dataset_path
@@ -28,6 +25,7 @@ from training_rl.offline_rl.generate_custom_minari_datasets.utils import (
 from training_rl.offline_rl.utils import delete_minari_data_if_exists
 
 OVERRIDE_DATA_SET = True
+
 
 @dataclass
 class MinariDatasetConfig:
@@ -213,10 +211,10 @@ def create_minari_datasets(
 # ToDo: Add a flag to keep or not the single datasets.
 def create_combined_minari_dataset(
     env_name: str,
-    dataset_names: Tuple[str, ...] = ("data_I", "data_II"),
-    dataset_identifiers: Tuple[str, ...] = ("", ""),
-    num_collected_points: Tuple[int, ...] = (1000, 1000),
-    behavior_policy_names: Tuple[BehaviorPolicyType, ...] = (
+    dataset_names: Tuple[str, str] = ("data_I", "data_II"),
+    dataset_identifiers: Tuple[str, str] = ("", ""),
+    num_collected_points: Tuple[int, int] = (1000, 1000),
+    behavior_policy_names: Tuple[BehaviorPolicyType, BehaviorPolicyType] = (
         BehaviorPolicyType.random,
         BehaviorPolicyType.random,
     ),
@@ -224,6 +222,9 @@ def create_combined_minari_dataset(
     version_dataset: str = "v0",
     env_2d_grid_initial_config: Grid2DInitialConfig | Sequence[Grid2DInitialConfig] = None,
 ) -> MinariDatasetConfig:
+    """
+    Combine two minari datsets into a single one and save metadata with useful information.
+    """
     collected_dataset_names = []
 
     if isinstance(env_2d_grid_initial_config, Grid2DInitialConfig) or env_2d_grid_initial_config is None:

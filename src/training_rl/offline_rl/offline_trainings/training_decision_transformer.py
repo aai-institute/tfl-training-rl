@@ -86,7 +86,7 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
 
     results = {}
     total_reward = 0
-    cumulative_reward_per_episode = []
+    rtgs_per_episode = []
     total_timesteps = 0
 
     state_dim = env.observation_space.shape[0]
@@ -118,8 +118,8 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
 
             quit = False
 
-            cumulative_reward_single_episode_list = []
-            cumulative_reward_single_episode_value = 0
+            cumulative_rews_single_episode = []
+            cumulative_rew_value = 0.0
             for t in range(max_test_ep_len):
 
                 total_timesteps += 1
@@ -146,8 +146,8 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
 
                 running_state, running_reward, done, _, _ = env.step(act.cpu().numpy())
 
-                cumulative_reward_single_episode_value += running_reward
-                cumulative_reward_single_episode_list.append(cumulative_reward_single_episode_value)
+                cumulative_rew_value += running_reward
+                cumulative_rews_single_episode.append(cumulative_rew_value)
 
                 # add action in placeholder
                 actions[0, t] = act
@@ -165,11 +165,12 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
 
             if quit:
                 break
-            cumulative_reward_per_episode.append(cumulative_reward_single_episode_list)
+
+            rtgs_per_episode.append(cumulative_rews_single_episode[::-1])  # invert list to get the rtg
 
     results['eval/avg_reward'] = total_reward / num_eval_ep
     results['eval/avg_ep_len'] = total_timesteps / num_eval_ep
-    results['eval/cumulative_reward_per_episode'] = cumulative_reward_per_episode
+    results['eval/rtg'] = rtgs_per_episode
 
     return results
 
