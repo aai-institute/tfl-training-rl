@@ -118,11 +118,9 @@ RUN make
 RUN make install
 RUN make datainstall
 
-ENV TORCS_DIR "$HOME/tfl-training-rl/torcs/BUILD/bin"
-RUN echo "export PATH=\"\$PATH:$TORCS_DIR\"" >> ~/.bashrc
-RUN echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${HOME}/.mujoco/mujoco210/bin" >> ~/.bashrc
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${HOME}/.mujoco/mujoco210/bin"
 RUN mv ${CODE_DIR}/.mujoco ${HOME}/
-
+ENV PATH="$HOME/tfl-training-rl/torcs/BUILD/bin:$PATH"
 
 ## Move to the code dir to install dependencies as the CODE_DIR contains the
 ## complete code base, including the poetry.lock file
