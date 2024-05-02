@@ -213,6 +213,15 @@ def move_right(state: np.ndarray, env: Custom2DGridEnv) -> int:
     return 3
 
 
+def move_up_from_bottom_twice(state: np.ndarray, env: Custom2DGridEnv) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    if state_xy[0] > 5:
+        return 0
+    else:
+        return 2
+
+
 def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
     possible_directions = [2, 3]
     weights = [1, 1]

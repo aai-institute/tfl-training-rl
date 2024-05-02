@@ -11,7 +11,8 @@ from training_rl.offline_rl.behavior_policies.custom_2d_grid_policy import (
     behavior_policy_8x8_grid_random_towards_left_within_strip,
     behavior_policy_8x8_grid_suboptimal_0_0_to_4_7, horizontal_random_walk,
     move_right, behavior_policy_8x8_suboptimal_determ_initial_3_0_final_3_7,
-    behavior_policy_8x8_suboptimal_rnd_initial_3_0_final_3_7, behavior_policy_8x8_suboptimal_initial_0_0_final_0_7)
+    behavior_policy_8x8_suboptimal_rnd_initial_3_0_final_3_7, behavior_policy_8x8_suboptimal_initial_0_0_final_0_7,
+    move_up_from_bottom_twice)
 from training_rl.offline_rl.behavior_policies.custom_torcs_policy import get_torcs_expert_policy, \
     get_torcs_drunk_driver_policy, get_torcs_expert_policy_with_noise
 
@@ -35,6 +36,7 @@ class BehaviorPolicyRestorationConfigFactoryRegistry(CallableEnum):
     )
     behavior_8x8_avoid_vertical_obstacle = behavior_policy_8x8_grid_avoid_vertical_obstacle
     behavior_move_right = move_right
+    behavior_move_up_from_bottom_twice = move_up_from_bottom_twice
     behavior_horizontal_random_walk = horizontal_random_walk
     random = lambda action_space: action_space.sample()
     behavior_8x8_moves_downwards_within_strip_and_left = (
@@ -58,6 +60,7 @@ class BehaviorPolicyType(str, Enum):
     behavior_8x8_random_towards_left_within_strip = "behavior_8x8_random_towards_left_within_strip"
     behavior_8x8_avoid_vertical_obstacle = "behavior_8x8_avoid_vertical_obstacle"
     behavior_move_right = "behavior_move_right"
+    behavior_move_up_from_bottom_twice = "behavior_move_up_from_bottom_twice"
     behavior_horizontal_random_walk = "behavior_horizontal_random_walk"
     random = "random"
     behavior_8x8_moves_downwards_within_strip_and_left = (
