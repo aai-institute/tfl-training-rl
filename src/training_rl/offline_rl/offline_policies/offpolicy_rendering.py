@@ -1,8 +1,9 @@
 import logging
 import sys
-from typing import Callable, Union
+from typing import Callable, Union, Any, List
 
 import gymnasium as gym
+import mediapy
 import numpy as np
 import pygame
 import torch
@@ -58,6 +59,12 @@ def initialize_pygame(title="RL agent animation"):
     return screen
 
 
+def render_mediapy(list_of_frames: List[np.ndarray], fps: float = 1, title="2d-GridWorld", **kwargs: Any):
+    if len(list_of_frames) == 0:
+        return
+    mediapy.show_video(list_of_frames, fps=fps, title=title, **kwargs)
+
+
 def offpolicy_rendering(
     env_or_env_name: Union[gym.Env, str],
     render_mode: RenderMode | None = RenderMode.RGB_ARRAY_LIST,
@@ -66,6 +73,8 @@ def offpolicy_rendering(
     policy_model: Union[BasePolicy, Callable, nn.Module] = None,
     num_frames: int = 100,
     imitation_policy_sampling: bool = False,
+    inline: bool = True,
+    fps: float = 8.0,
 ):
     """
     :param env_or_env_name: A gym environment or an env name.
@@ -77,6 +86,8 @@ def offpolicy_rendering(
     :param policy_model: A Tianshou policy mode or a callable that accept an state and the env and returns an action
     :param num_frames: Number of frames
     :param imitation_policy_sampling: Only for imitation learning policy. If False we compute the eps greedy of \pi(a|s).
+    :param inline: only to visualize the rendering inline in a jupyter notebook.
+    :param fps: only useful for inline plots.
     :return:
 
     Usage:
@@ -115,14 +126,15 @@ def offpolicy_rendering(
     if isinstance(env.unwrapped, TorcsEnv) or isinstance(env.unwrapped, TorcsLidarEnv):
         render_mode = None
 
-
     state, _ = env.reset()
 
     state_shape = extract_dimension(env.observation_space)
 
-    if render_mode == RenderMode.RGB_ARRAY_LIST:
-        screen = initialize_pygame()
+    if not inline:
+        if render_mode == RenderMode.RGB_ARRAY_LIST:
+            screen = initialize_pygame()
 
+    list_of_frames = []
     for _ in range(num_frames):
         if behavior_policy_name is not None:
             behavior_policy = BehaviorPolicyRestorationConfigFactoryRegistry.__dict__[
@@ -163,7 +175,12 @@ def offpolicy_rendering(
         num_frames += 1
 
         if render_mode == RenderMode.RGB_ARRAY_LIST:
-            render_rgb_frames_pygame(env, screen)
+            if inline:
+                rendered_data = env.render()
+                frames = np.transpose(rendered_data[0], (0, 1, 2))
+                list_of_frames.append(frames)
+            else:
+                render_rgb_frames_pygame(env, screen)
         elif render_mode == None:
             pass
         else:
@@ -175,8 +192,11 @@ def offpolicy_rendering(
         else:
             state = next_state
 
-    pygame.quit()
+    if not inline:
+        pygame.quit()
 
+    if inline:
+        render_mediapy(list_of_frames, fps=fps)
     if isinstance(env.unwrapped, TorcsEnv) or isinstance(env.unwrapped, TorcsLidarEnv):
         env.end()
 
