@@ -13,6 +13,6 @@ fi
 cd "${ROOT_DIR}" || exit
 
 
-# original entrypoint, see https://github.com/jupyter/docker-stacks/blob/master/base-notebook/Dockerfile#L150
+# original entrypoint, see https://github.com/jupyter/docker-stacks/blob/main/images/docker-stacks-foundation/Dockerfile#L131
 # need -s option for tini to work properly when started not as PID 1
-tini -s -g -- "$@"
+tini -s -g -- start.sh "$@"
