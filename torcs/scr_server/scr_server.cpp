@@ -590,7 +590,7 @@ if (RESTARTING[index]==0)
     else
     {
 //#ifdef __UDP_SERVER_VERBOSE__
-        std::cout << "Timeout for client answer\n";
+        //std::cout << "Timeout for client answer\n";
 //#endif
 
         // If no new controls are availables uses old ones...
