@@ -1,2 +1,0 @@
-TORCS_BASE = /home/ivan/Documents/GIT_PROJECTS/tfl-training-rl/torcs
-MAKE_DEFAULT = /home/ivan/Documents/GIT_PROJECTS/tfl-training-rl/torcs/Make-default.mk

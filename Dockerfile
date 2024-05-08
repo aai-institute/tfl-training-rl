@@ -106,22 +106,6 @@ WORKDIR "${HOME}"
 
 COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 
-# Build c++ mujoco project.
-USER root
-WORKDIR "$CODE_DIR"/torcs
-ENV CFLAGS="-fPIC"
-ENV CPPFLAGS=$CFLAGS
-ENV CXXFLAGS=$CFLAGS
-RUN make clean
-RUN ./configure --prefix=$(pwd)/BUILD
-RUN make
-RUN make install
-RUN make datainstall
-
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${HOME}/.mujoco/mujoco210/bin"
-RUN mv ${CODE_DIR}/.mujoco ${HOME}/
-ENV PATH="$HOME/tfl-training-rl/torcs/BUILD/bin:$PATH"
-
 ## Move to the code dir to install dependencies as the CODE_DIR contains the
 ## complete code base, including the poetry.lock file
 WORKDIR $CODE_DIR
