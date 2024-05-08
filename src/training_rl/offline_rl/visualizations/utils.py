@@ -138,7 +138,7 @@ def compute_corrected_actions_from_policy_guided(
 
         x_values = np.arange(len(lists_actions[0]))
         for actions, label in zip(lists_actions, lists_labels):
-            plt.scatter(x_values, actions, label=label)
+            plt.scatter(x_values, actions, label=label, s=3)
 
         plt.xlabel('step')
         plt.ylabel('action')

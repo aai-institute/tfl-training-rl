@@ -465,8 +465,8 @@ class D4RLTrajectoryDataset(Dataset):
         return timesteps, states, actions, returns_to_go, traj_mask
 
 
-def widget_list(list_names: List[str]):
-    widget_dropdown = widgets.Dropdown(options=list_names, value=list_names[0])
+def widget_list(list_names: List[str], description: str = ''):
+    widget_dropdown = widgets.Dropdown(options=list_names, value=list_names[0], description=description)
     display(widget_dropdown)
     return widget_dropdown
 

@@ -14,6 +14,7 @@ from torch import nn
 
 from training_rl.offline_rl.behavior_policies.behavior_policy_registry import (
     BehaviorPolicyRestorationConfigFactoryRegistry, BehaviorPolicyType)
+from training_rl.offline_rl.custom_envs.custom_2d_grid_env.simple_grid import Custom2DGridEnv
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
     RenderMode, EnvFactory
 from training_rl.offline_rl.custom_envs.gym_torcs.gym_torcs import TorcsEnv, TorcsLidarEnv
@@ -44,7 +45,12 @@ def render_rgb_frames_pygame(env: gym.Env, screen, time_frame=20):
             sys.exit()
 
     rendered_data = env.render()
-    frames = np.transpose(rendered_data[0], (1, 0, 2))
+
+    frames = np.copy(rendered_data[0])
+
+    if isinstance(env.unwrapped, Custom2DGridEnv):
+        frames = np.transpose(frames, (1, 0, 2))
+
     pygame_surface = pygame.surfarray.make_surface(frames)
     screen.blit(pygame_surface, (0, 0))
     pygame.display.flip()
@@ -52,7 +58,6 @@ def render_rgb_frames_pygame(env: gym.Env, screen, time_frame=20):
 
 def initialize_pygame(title="RL agent animation"):
     import pygame
-
     pygame.init()
     screen = pygame.display.set_mode([256, 256])
     pygame.display.set_caption(title)
@@ -177,7 +182,9 @@ def offpolicy_rendering(
         if render_mode == RenderMode.RGB_ARRAY_LIST:
             if inline:
                 rendered_data = env.render()
-                frames = np.transpose(rendered_data[0], (0, 1, 2))
+                frames = rendered_data[0]
+                if isinstance(env.unwrapped, Custom2DGridEnv):
+                    frames = np.transpose(rendered_data[0], (0, 1, 2))
                 list_of_frames.append(frames)
             else:
                 render_rgb_frames_pygame(env, screen)

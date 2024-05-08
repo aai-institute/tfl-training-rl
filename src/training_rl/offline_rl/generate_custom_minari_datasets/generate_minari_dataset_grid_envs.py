@@ -15,14 +15,13 @@ from training_rl.offline_rl.behavior_policies.behavior_policy_registry import (
     BehaviorPolicyRestorationConfigFactoryRegistry, BehaviorPolicyType)
 from training_rl.offline_rl.custom_envs.custom_2d_grid_env.obstacles_2D_grid_register import \
     ObstacleTypes
-from training_rl.offline_rl.custom_envs.custom_envs_registration import \
-    register_grid_envs, EnvFactory
+from training_rl.offline_rl.custom_envs.custom_envs_registration import EnvFactory
 from training_rl.offline_rl.custom_envs.gym_torcs.gym_torcs import TorcsEnv, TorcsLidarEnv
-from training_rl.offline_rl.custom_envs.utils import (
-    Grid2DInitialConfig, InitialConfigCustom2DGridEnvWrapper)
+from training_rl.offline_rl.custom_envs.utils import Grid2DInitialConfig
 from training_rl.offline_rl.generate_custom_minari_datasets.utils import (
     generate_compatible_minari_dataset_name, get_dataset_name_2d_grid)
 from training_rl.offline_rl.utils import delete_minari_data_if_exists
+import gymnasium as gym
 
 OVERRIDE_DATA_SET = True
 
@@ -78,14 +77,20 @@ def create_minari_collector_env_wrapper(
     """
     Creates a wrapper 'DataCollectorV0' around the environment in order to collect data for minari dataset
 
-    :param env_name:
+    :param env_name: One of the environments defined in Gymnasium or in EnvFactory
     :param initial_config_2d_grid_env:
     :return:
     """
 
-    env = EnvFactory[env_name].get_env(
-        grid_config=initial_config_2d_grid_env
-    )
+    if env_name in EnvFactory.__members__.values():
+        env = EnvFactory[env_name].get_env(
+            grid_config=initial_config_2d_grid_env
+        )
+    else:
+        try:
+            env = gym.make(env_name)
+        except gym.error.UnregisteredEnv as e:
+            print(f"Error: The environment is neither from Gymnasium or registered in EnvFactory {e}.")
 
     class CustomSubsetStepDataCallback(StepDataCallback):
         def __call__(self, env, **kwargs):
@@ -147,7 +152,7 @@ def create_minari_datasets(
     """
     Creates a custom Minari dataset and save a MinariDatasetConfig metadata to file (see /data/offline_data).
 
-    :param env_name:
+    :param env_name: One of the environments defined in Gymnasium or in EnvFactory
     :param dataset_name:
     :param dataset_identifier:
     :param version_dataset:
