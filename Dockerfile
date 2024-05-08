@@ -110,6 +110,11 @@ COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 ## complete code base, including the poetry.lock file
 WORKDIR $CODE_DIR
 
+# mujoco is not installed properly on jhub with poetry. Not sure what is the reason.
+RUN pip uninstall -y mujoco_py
+RUN pip install mujoco_py==2.1.2.14
+
+
 RUN pip install --no-cache-dir dist/*.whl
 
 RUN ipython kernel install --name "tfl-training-rl" --user
