@@ -1,3 +1,4 @@
+import functools
 import os.path
 import xml.etree.ElementTree as ET
 from itertools import accumulate
@@ -5,7 +6,7 @@ from itertools import accumulate
 import gymnasium as gym
 import numpy as np
 import torch
-from typing import Dict, Tuple, Union, Any, Callable, Literal
+from typing import Dict, Tuple, Union, Any, Callable, Literal, List
 from matplotlib import pyplot as plt
 from tianshou.data import Batch, ReplayBuffer
 from tianshou.policy import ImitationPolicy, BasePolicy
@@ -21,6 +22,16 @@ from training_rl.offline_rl.utils import extract_dimension, one_hot_to_integer
 from training_rl.offline_rl.behavior_policies.behavior_policy_registry import BehaviorPolicyType, \
         BehaviorPolicyRestorationConfigFactoryRegistry
 
+
+def ignore_keyboard_interrupt(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except KeyboardInterrupt:
+            pass  # Ignore KeyboardInterrupt
+
+    return wrapper
 
 
 def get_state_action_data_and_policy_grid_distributions(
@@ -154,11 +165,18 @@ def compute_corrected_actions_from_policy_guided(
 
     def get_action_from_policy(obs: np.ndarray, raw_obs:Any, policy: Callable | BasePolicy) -> np.ndarray:
         if isinstance(policy, BasePolicy):
-            return policy(Batch({"obs": obs, "info": {}})).act.detach().numpy()
+            action = policy(Batch({"obs": obs.reshape(1, 19), "info": {}})).act
+            if isinstance(action, torch.Tensor):
+                action = action.detach().numpy()
+            return action
         elif isinstance(policy, nn.Module):
-            return policy(torch.Tensor(obs)).detach().numpy()
+            action = policy(torch.Tensor(obs))
+            if isinstance(action, tuple):
+                action = action[0]
+            return action.detach().numpy()
         elif isinstance(policy, Callable):
             return policy(raw_obs)
+
 
     def get_policy_name(policy: BehaviorPolicyType | BasePolicy):
         if isinstance(policy, BehaviorPolicyType):
@@ -171,6 +189,7 @@ def compute_corrected_actions_from_policy_guided(
         policy_names += [get_policy_name(policy_b)]
 
     policy_rollout = get_policy(policy_guide)
+
     policy_1 = get_policy(policy_a)
     if policy_b is not None:
         policy_2 = get_policy(policy_b)
@@ -270,4 +289,117 @@ def trajectory_cumulative_rewards_plot(
     plt.ylabel('Rewards to go')
     plt.title(f'Comparison of Rewards to go for initial R_0:{initial_R_0}')
     plt.show()
+
+
+@ignore_keyboard_interrupt
+def policy_rollout_torcs_env(
+        driver_policy: BehaviorPolicyType | BasePolicy | nn.Module | Callable,
+        advisor_policy: BehaviorPolicyType | BasePolicy | nn.Module | Callable | None = None,
+        env_collected_quantities: str | List[str] | None = None,
+        num_steps: int = 1000,
+) -> Dict[str, List]:
+    """
+    It creates a rollout using the driver policy and collects the 'observation_name' from the environment.
+    It returns a dictionary containing the actions of the driver policy and the observations collected.
+    If the advisor policy is not None, it also provides the actions that should have been taken by the advisor
+    policy for each step in the rollout. If env_collected_quantities are not None, it also collects those
+    quantities for every step in the rollout.
+
+    :param driver_policy:
+    :param advisor_policy:
+    :param env_collected_quantities:
+    :param num_steps:
+    """
+
+    def get_policy(policy: BehaviorPolicyType | BasePolicy | nn.Module | Callable):
+        if isinstance(policy, BehaviorPolicyType):
+            return BehaviorPolicyRestorationConfigFactoryRegistry.__dict__[policy]
+        else:
+            return policy
+
+    def get_action_from_policy(obs: np.ndarray, raw_obs:Any, policy: Callable | BasePolicy) -> np.ndarray:
+        if isinstance(policy, BasePolicy):
+            action = policy(Batch({"obs": obs.reshape(1, 19), "info": {}})).act
+            if isinstance(action, torch.Tensor):
+                action = action.detach().numpy()
+            return action
+        elif isinstance(policy, nn.Module):
+            action = policy(torch.Tensor(obs))
+            if isinstance(action, tuple):
+                action = action[0]
+            return action.detach().numpy()
+        elif isinstance(policy, Callable):
+            return policy(raw_obs)
+
+    driver = get_policy(driver_policy)
+    advisor = None if advisor_policy is None else get_policy(advisor_policy)
+
+    list_actions_advisor = []
+    list_actions_driver = []
+    list_observations = []
+
+    collected_quantities = {}
+    if env_collected_quantities is not None:
+        if isinstance(env_collected_quantities, str):
+            env_collected_quantities = [env_collected_quantities]
+        collected_quantities = {key: [] for key in env_collected_quantities}
+
+    env = EnvFactory.torcs.get_env()
+    obs, _ = env.reset()
+
+    done = False
+    for num_step in range(num_steps):
+        if done:
+            break
+
+        raw_obs = env.raw_observation
+
+        list_observations.append(obs)
+        if env_collected_quantities is not None:
+            for collected_quantity in env_collected_quantities:
+                if collected_quantity in raw_obs:
+                    collected_quantities[collected_quantity].append(raw_obs[collected_quantity].item())
+                else:
+                    raise ValueError(f"observation {env_collected_quantities} not found in environment")
+
+        action = get_action_from_policy(obs, raw_obs, driver)
+
+        action_value = action if not isinstance(action, np.ndarray) else action.item()
+        list_actions_driver.append(action_value)
+
+        if advisor_policy is not None:
+            action_advisor = get_action_from_policy(obs, raw_obs, advisor)
+            action_advisor = action_advisor if not isinstance(action_advisor, np.ndarray) else action_advisor.item()
+            list_actions_advisor.append(action_advisor)
+
+        obs, reward, done, truncations, info = env.step(action)
+
+    env.end()
+
+    output = {
+        "actions_driver": list_actions_driver,
+        "actions_advisor": list_actions_advisor,
+        "observations": list_observations,
+    }
+
+    if env_collected_quantities is not None:
+        output.update(collected_quantities)
+
+    return output
+
+
+def compare_policy_decisions_vs_expert_suggestions(
+    policy_actions:List[np.ndarray],
+    expert_suggestions:List[np.ndarray],
+    iteration:int = 0,
+):
+    x = range(len(policy_actions))
+    plt.plot(x, policy_actions, label='Policy actions')
+    plt.plot(x, expert_suggestions, label='Expert suggested actions')
+    plt.xlabel('Time steps')
+    plt.ylabel("Actions")
+    plt.title(f'Policy actions vs expert suggestions in Dagger iter: {iteration}')
+    plt.legend()
+    plt.show()
+
 

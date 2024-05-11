@@ -29,9 +29,13 @@ def get_torcs_expert_policy_with_noise(state: "state", env: "TorcsLidarEnv"=None
 
 
 def get_torcs_drunk_driver_policy(state: "state", env: "TorcsEnv"=None) -> np.ndarray:
-    steer = (-1)**(env.number_steps()//400)*0.05
-    if state["trackPos"] < -0.35:
+    #steer = (-1)**(env.number_steps()//1000)*0.05
+    if state["trackPos"] < -0.1:
         steer = 0.2
-    elif state["trackPos"] > 0.25:
-        steer = -0.2
+    elif state["trackPos"] > 0.0 and state["trackPos"] <0.1:
+        steer = -0.03
+    elif state["trackPos"] > 0.1:
+        steer = -0.5
+    else:
+        steer = 0.0
     return np.array([steer])

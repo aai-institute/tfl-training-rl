@@ -18,9 +18,9 @@ from training_rl.offline_rl.custom_envs.custom_2d_grid_env.simple_grid import Cu
 from training_rl.offline_rl.custom_envs.custom_envs_registration import \
     RenderMode, EnvFactory
 from training_rl.offline_rl.custom_envs.gym_torcs.gym_torcs import TorcsEnv, TorcsLidarEnv
-from training_rl.offline_rl.custom_envs.utils import (
-    Grid2DInitialConfig, InitialConfigCustom2DGridEnvWrapper)
+from training_rl.offline_rl.custom_envs.utils import Grid2DInitialConfig
 from training_rl.offline_rl.utils import extract_dimension
+from training_rl.offline_rl.visualizations.utils import ignore_keyboard_interrupt
 
 logging.basicConfig(level=logging.WARNING)
 
@@ -70,6 +70,7 @@ def render_mediapy(list_of_frames: List[np.ndarray], fps: float = 1, title="2d-G
     mediapy.show_video(list_of_frames, fps=fps, title=title, **kwargs)
 
 
+@ignore_keyboard_interrupt
 def offpolicy_rendering(
     env_or_env_name: Union[gym.Env, str],
     render_mode: RenderMode | None = RenderMode.RGB_ARRAY_LIST,

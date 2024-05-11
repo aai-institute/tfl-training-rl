@@ -282,11 +282,11 @@ if __name__ == "__main__":
     #ENV_NAME = "HalfCheetah-v3"
 
     DATASET_PATH = "../data/decision_transformers/d4rl_data/walker2d-medium-v1.pkl"
-    PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_walker2d-medium-v1_April_24_v0.pt")
+    PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_walker2d-medium-v1_May_10_v0.pt")
     ENV_NAME = "Walker2d-v3"
 
     BATCH_SIZE = 64
-    NUM_EPOCHS = 2000
+    NUM_EPOCHS = 3000
     NUM_STEPS_PER_EPOCH = 1000
 
     RTG_TARGET = 3500  # only for evaluation
