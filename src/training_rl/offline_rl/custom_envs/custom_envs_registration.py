@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import Enum, StrEnum
+from enum import StrEnum
 from typing import List, Optional
 
 import gymnasium as gym

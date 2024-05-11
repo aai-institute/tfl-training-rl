@@ -1,4 +1,6 @@
 from training_rl.offline_rl.load_env_variables import load_env_variables
+from training_rl.offline_rl.visualizations.utils import ignore_keyboard_interrupt
+
 load_env_variables()
 
 import json
@@ -140,6 +142,7 @@ def create_minari_config(
     return MinariDatasetConfig.from_dict(dataset_config)
 
 
+@ignore_keyboard_interrupt
 def create_minari_datasets(
     env_name: str,
     dataset_name: str = "data",

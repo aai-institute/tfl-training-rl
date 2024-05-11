@@ -1,8 +1,10 @@
 from typing import Dict, Any
 
 import torch
+from tianshou.policy import ImitationPolicy
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
+
 
 dagger_config = {
     "input_dim": 19,  # number of lidar rays
@@ -43,27 +45,33 @@ def create_dagger_torcs_policy_from_dict(
         policy_config = dagger_config
     return DaggerTorcsPolicy(input_dim=policy_config["input_dim"], output_dim=policy_config["output_dim"])
 
+
 # ToDo: This should be implemented in Tianshou. But as DAGGER involved an aggregation of the buffer this is a faster
 #   way for now.
 def model_dagger_fit(
     input_data: torch.Tensor,
     target_data: torch.Tensor,
-    model: nn.Module,
+    model: nn.Module | ImitationPolicy,
     batch_size=128,
     epochs=1,
     shuffle=True,
 ):
+    target_data = target_data.reshape(-1, 1)
     dataset = TensorDataset(input_data, target_data)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
-
     criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+    torch_model = model if not isinstance(model, ImitationPolicy) else model.actor
+
+    optimizer = torch.optim.Adam(torch_model.parameters(), lr=1e-3)
 
     for epoch in range(epochs):
         running_loss = 0.0
         for inputs_batch, targets_batch in dataloader:
             optimizer.zero_grad()
-            outputs = model(inputs_batch)
+            outputs = torch_model(inputs_batch)
+            if isinstance(outputs, tuple):
+                outputs = outputs[0]
             loss = criterion(outputs, targets_batch)
             loss.backward()
             optimizer.step()
