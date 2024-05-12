@@ -25,7 +25,7 @@ USER ${NB_UID}
 
 WORKDIR $CODE_DIR
 
-COPY --chown=${NB_UID}:${NB_GID} poetry.lock pyproject.toml .
+COPY --chown=${NB_UID}:${NB_GID} poetry.lock pyproject.toml ./
 
 RUN poetry install --no-interaction --no-ansi --no-root --only main
 RUN poetry install --no-interaction --no-ansi --no-root --with add1
@@ -71,12 +71,12 @@ USER ${NB_UID}
 
 WORKDIR ${CODE_DIR}
 
-## Copy virtual environment from base image
+# Copy virtual environment from base image
 COPY --from=BASE ${CODE_DIR}/.venv ${CODE_DIR}/.venv
-## Copy built package from base image
+# Copy built package from base image
 COPY --from=BASE ${CODE_DIR}/dist ${CODE_DIR}/dist
 
-## This goes directly into main jupyter, not poetry env
+# This goes directly into main jupyter, not poetry env
 COPY --chown=${NB_UID}:${NB_GID} build_scripts ./build_scripts
 RUN bash build_scripts/install_presentation_requirements.sh
 
@@ -90,40 +90,24 @@ RUN rm mujoco.tar.gz
 RUN chmod -R a+rx ${CODE_DIR}/.mujoco
 
 
-## Start of HACK: the home directory is overwritten by a mount when a jhub server is started off this image
-## Thus, we create a jovyan-owned directory to which we copy the code and then move it to the home dir as part
-## of the entrypoint
+# Start of HACK: the home directory is overwritten by a mount when a jhub server is started off this image
+# Thus, we create a jovyan-owned directory to which we copy the code and then move it to the home dir as part
+# of the entrypoint
 COPY --chown=${NB_UID}:${NB_GID} entrypoint.sh $CODE_DIR
 RUN chmod +x "${CODE_DIR}/"entrypoint.sh
 
-## Unfortunately, we cannot use ${CODE_DIR} in the ENTRYPOINT directive, so we have to hardcode it
-## Keep in sync with the value of CODE_DIR above
+# Unfortunately, we cannot use ${CODE_DIR} in the ENTRYPOINT directive, so we have to hardcode it
+# Keep in sync with the value of CODE_DIR above
 ENTRYPOINT ["/tmp/code/entrypoint.sh"]
 
-## End of HACK
+# End of HACK
 
 WORKDIR "${HOME}"
 
 COPY --chown=${NB_UID}:${NB_GID} . $CODE_DIR
 
-# Build c++ mujoco project.
-USER root
-WORKDIR "$CODE_DIR"/torcs
-ENV CFLAGS="-fPIC"
-ENV CPPFLAGS=$CFLAGS
-ENV CXXFLAGS=$CFLAGS
-RUN make clean
-RUN ./configure --prefix=$(pwd)/BUILD
-RUN make
-RUN make install
-RUN make datainstall
-
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${HOME}/.mujoco/mujoco210/bin"
-RUN mv ${CODE_DIR}/.mujoco ${HOME}/
-ENV PATH="$HOME/tfl-training-rl/torcs/BUILD/bin:$PATH"
-
-## Move to the code dir to install dependencies as the CODE_DIR contains the
-## complete code base, including the poetry.lock file
+# Move to the code dir to install dependencies as the CODE_DIR contains the
+# complete code base, including the poetry.lock file
 WORKDIR $CODE_DIR
 
 RUN pip install --no-cache-dir dist/*.whl
