@@ -213,15 +213,6 @@ def move_right(state: np.ndarray, env: Custom2DGridEnv) -> int:
     return 3
 
 
-def move_up_from_bottom_twice(state: np.ndarray, env: Custom2DGridEnv) -> int:
-    state_index = one_hot_to_integer(state)
-    state_xy = env.to_xy(state_index)
-    if state_xy[0] > 5:
-        return 0
-    else:
-        return 2
-
-
 def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
     possible_directions = [2, 3]
     weights = [1, 1]
@@ -304,8 +295,47 @@ def behavior_policy_8x8_suboptimal_initial_0_0_final_0_7(
         return 3
 
 
+def move_from_7_7_twice_to_left(state: np.ndarray, env: Custom2DGridEnv) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    if state_xy[1] < 5:
+        return 3
+    else:
+        return 2
+
+
+def move_up(state: np.ndarray, env: Custom2DGridEnv) -> int:
+    action = 0
+    if not env.discrete_action:
+        return np.eye(env.action_space.shape[0])[action]
+    else:
+        return action
+
+
+def move_left_with_noise(state: np.ndarray, env: Custom2DGridEnv) -> int:
+    possible_directions = [0, 1, 2, 3]
+    weights = [1, 1, 4, 1]
+
+    action = random.choices(possible_directions, weights=weights)[0]
+
+    if not env.discrete_action:
+        return np.eye(env.action_space.shape[0])[action]
+    else:
+        return action
+
+
+def move_up_from_bottom_5_steps(state: np.ndarray, env: Custom2DGridEnv) -> int:
+    state_index = one_hot_to_integer(state)
+    state_xy = env.to_xy(state_index)
+    if state_xy[0] > 2:
+        return 0
+    else:
+        return 1
+
+
 # MOVES:
 #   0: (-1, 0),  # UP
 #   1: (1, 0),  # DOWN
 #   2: (0, -1),  # LEFT
 #   3: (0, 1)  # RIGHT
+

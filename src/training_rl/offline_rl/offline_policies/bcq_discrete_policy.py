@@ -11,12 +11,12 @@ from torch import nn
 from training_rl.offline_rl.utils import extract_dimension
 
 policy_config = {
-    "lr": 0.001,
+    "lr": 0.0001,
     "gamma": 0.99,
-    "n_step": 10,
-    "target_update_freq": 100,
+    "n_step": 5,
+    "target_update_freq": 50,
     "eps_test": 0.001,
-    "unlikely_action_threshold": 0.8,  # the higher the most optimal policies but more o.o.d. data too!
+    "unlikely_action_threshold": 0.5,  # the lower the most optimal policies but more o.o.d. data too!
     "imitation_logits_penalty": 0.001,  # 0.001
 }
 

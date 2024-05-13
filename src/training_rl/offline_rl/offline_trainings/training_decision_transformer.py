@@ -277,13 +277,13 @@ if __name__ == "__main__":
 
     PATH_TO_MODELS = "../data/decision_transformers/models/"
 
-    #DATASET_PATH = "../data/decision_transformers/d4rl_data/halfcheetah-medium-v0.pkl"
-    #PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_halfcheetah_medium_v0_April_24_v2.pt")
-    #ENV_NAME = "HalfCheetah-v3"
+    DATASET_PATH = "../data/decision_transformers/d4rl_data/halfcheetah-medium-v0.pkl"
+    PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_halfcheetah_medium_v0_April_24_v2.pt")
+    ENV_NAME = "HalfCheetah-v3"
 
-    DATASET_PATH = "../data/decision_transformers/d4rl_data/walker2d-medium-v1.pkl"
-    PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_walker2d-medium-v1_May_10_v0.pt")
-    ENV_NAME = "Walker2d-v3"
+    #DATASET_PATH = "../data/decision_transformers/d4rl_data/walker2d-medium-v1.pkl"
+    #PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_walker2d-medium-v1_May_10_v0.pt")
+    #ENV_NAME = "Walker2d-v3"
 
     BATCH_SIZE = 64
     NUM_EPOCHS = 3000

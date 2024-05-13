@@ -44,7 +44,7 @@ class GridEnvConfig:
     obstacles: Optional[List[str]] = None
     render_mode: RenderMode = None
     discrete_action: bool = True
-    max_episode_steps: int = 60
+    max_episode_steps: int = 50
 
     def __post_init__(self):
         if self.obstacles:

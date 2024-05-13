@@ -173,7 +173,5 @@ def offline_training(
     policy_name = POLICY_NAME if policy_name is None else policy_name
     torch.save(policy.state_dict(), os.path.join(log_path, policy_name))
 
-    print("#################### ",  os.path.join(log_path, policy_name))
-
     # Save config
     offline_policy_config.save_to_file()
