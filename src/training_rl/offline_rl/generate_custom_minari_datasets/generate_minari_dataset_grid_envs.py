@@ -276,8 +276,8 @@ def create_combined_minari_dataset(
     minari_combined_dataset_config = MinariDatasetConfig.load_from_file(collected_dataset_names[0])
     minari_combined_dataset_config.num_steps = total_num_steps
     minari_combined_dataset_config.data_set_name = name_combined_dataset
-    minari_combined_dataset_config.save_to_file()
     minari_combined_dataset_config.children_dataset_names = collected_dataset_names
+    minari_combined_dataset_config.save_to_file()
 
     return minari_combined_dataset_config
 
