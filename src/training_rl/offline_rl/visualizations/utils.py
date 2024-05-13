@@ -17,7 +17,8 @@ from training_rl.offline_rl.config import get_offline_rl_abs_path
 from training_rl.offline_rl.custom_envs.custom_envs_registration import EnvFactory
 from training_rl.offline_rl.offline_policies.minimal_GPT_model import DecisionTransformer
 from training_rl.offline_rl.offline_trainings.training_decision_transformer import evaluate_on_env
-from training_rl.offline_rl.utils import extract_dimension, one_hot_to_integer
+from training_rl.offline_rl.utils import extract_dimension, one_hot_to_integer, state_action_histogram, \
+    compare_state_action_histograms
 
 from training_rl.offline_rl.behavior_policies.behavior_policy_registry import BehaviorPolicyType, \
         BehaviorPolicyRestorationConfigFactoryRegistry
@@ -40,6 +41,7 @@ def get_state_action_data_and_policy_grid_distributions(
     policy: Union[nn.Module, str, None] = None,
     num_episodes: int = 1,
     logits_sampling: bool = False,
+    plot: bool = True,
 ) -> Tuple[Dict, Dict]:
     """
 
@@ -111,6 +113,23 @@ def get_state_action_data_and_policy_grid_distributions(
 
     else:
         state_action_count_policy = None
+
+    if plot:
+        new_keys = [(env.to_xy(state_action[0]), state_action[1]) for state_action in
+                    list(state_action_count_data.keys())]
+
+        state_action_histogram(
+            state_action_count_data,
+            title="State-Action data distribution",
+            new_keys_for_state_action_count_plot=new_keys
+        )
+        if state_action_count_policy is not None:
+            state_action_histogram(
+                state_action_count_policy,
+                title="State-Action data distribution",
+                new_keys_for_state_action_count_plot=new_keys
+            )
+            compare_state_action_histograms(state_action_count_data, state_action_count_policy)
 
     return state_action_count_data, state_action_count_policy
 
