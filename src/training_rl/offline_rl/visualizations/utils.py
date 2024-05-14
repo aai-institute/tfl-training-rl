@@ -301,16 +301,16 @@ def policy_rollout_torcs_env(
 
 
 def compare_policy_decisions_vs_expert_suggestions(
-    policy_actions:List[np.ndarray],
-    expert_suggestions:List[np.ndarray],
-    iteration:int = 0,
+    policy_actions: List[np.ndarray],
+    expert_suggestions: List[np.ndarray],
+    iteration: int = 0,
 ):
     x = range(len(policy_actions))
     plt.plot(x, policy_actions, label='Policy actions')
     plt.plot(x, expert_suggestions, label='Expert suggested actions')
     plt.xlabel('Time steps')
     plt.ylabel("Actions")
-    plt.title(f'Policy actions vs expert suggestions in Dagger iter: {iteration}')
+    plt.title(f'Policy actions vs expert suggestions in iter: {iteration}')
     plt.legend()
     plt.show()
 
