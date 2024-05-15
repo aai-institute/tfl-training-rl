@@ -77,9 +77,7 @@ def behavior_policy_8x8_grid_deterministic_4_0_to_7_7(
     """
     state_index = one_hot_to_integer(state)
     state_xy = env.to_xy(state_index)
-    if state_xy == (4, 0):
-        return 1
-    elif state_xy[0] == 5 and state_xy[1] < 7:
+    if state_xy[0] == 4 and state_xy[1] < 7:
         return 3
     else:
         return 1
@@ -98,7 +96,9 @@ def behavior_policy_8x8_grid_deterministic_0_0_to_4_7(
     """
     state_index = one_hot_to_integer(state)
     state_xy = env.to_xy(state_index)
-    if state_xy[0] == 4:
+    if state_xy[1] == 7:
+        return 0
+    elif state_xy[0] == 4:
         return 3
     else:
         return 1
@@ -287,7 +287,7 @@ def behavior_policy_8x8_suboptimal_initial_0_0_final_0_7(
     state_index = one_hot_to_integer(state)
     state_xy = env.to_xy(state_index)
 
-    if state_xy[1] == 7:
+    if state_xy[1] == 6:
         return 0
     if state_xy[0] < 4:
         return 1

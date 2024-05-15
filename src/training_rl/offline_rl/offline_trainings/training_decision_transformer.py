@@ -1,6 +1,9 @@
 # Code adapted from https://colab.research.google.com/github/nikhilbarhate99/min-decision-transformer/
 # blob/master/min_decision_transformer.ipynb
 import os.path
+from typing import List, Any
+
+import mediapy
 
 # ToDo: Improve code quality
 from training_rl.offline_rl.load_env_variables import load_env_variables
@@ -79,8 +82,14 @@ def show_video(image, fps=1):
     return False
 
 
+def render_mediapy(list_of_frames: List[np.ndarray], fps: float = 1, title="2d-GridWorld", **kwargs: Any):
+    if len(list_of_frames) == 0:
+        return
+    mediapy.show_video(list_of_frames, fps=fps, title=title, **kwargs)
+
+
 def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
-                    num_eval_ep=10, max_test_ep_len=1000, render=False):
+                    num_eval_ep=10, max_test_ep_len=1000, render=False, inline=True, fps=0.8):
 
     eval_batch_size = 1  # required for forward pass
 
@@ -97,6 +106,7 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
 
     model.eval()
 
+    list_of_frames = []
     with torch.no_grad():
 
         for _ in range(num_eval_ep):
@@ -156,9 +166,12 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
 
                 if render:
                     image = env.render()
-                    quit = show_video(image)
-                    if quit:
-                        break
+                    if not inline:
+                        quit = show_video(image)
+                        if quit:
+                            break
+                    else:
+                        list_of_frames.append(image)
 
                 if done:
                     break
@@ -167,6 +180,9 @@ def evaluate_on_env(model, device, context_len, env, rtg_target, rtg_scale,
                 break
 
             rtgs_per_episode.append(cumulative_rews_single_episode[::-1])  # invert list to get the rtg
+
+    if inline:
+        render_mediapy(list_of_frames, fps=fps)
 
     results['eval/avg_reward'] = total_reward / num_eval_ep
     results['eval/avg_ep_len'] = total_timesteps / num_eval_ep
@@ -280,10 +296,6 @@ if __name__ == "__main__":
     DATASET_PATH = "../data/decision_transformers/d4rl_data/halfcheetah-medium-v0.pkl"
     PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_halfcheetah_medium_v0_April_24_v2.pt")
     ENV_NAME = "HalfCheetah-v3"
-
-    #DATASET_PATH = "../data/decision_transformers/d4rl_data/walker2d-medium-v1.pkl"
-    #PATH_TO_MODEL = os.path.join(PATH_TO_MODELS, "model_d4rl_walker2d-medium-v1_May_10_v0.pt")
-    #ENV_NAME = "Walker2d-v3"
 
     BATCH_SIZE = 64
     NUM_EPOCHS = 3000
