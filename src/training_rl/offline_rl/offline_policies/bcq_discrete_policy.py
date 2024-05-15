@@ -16,7 +16,7 @@ policy_config = {
     "n_step": 5,
     "target_update_freq": 50,
     "eps_test": 0.001,
-    "unlikely_action_threshold": 0.5,  # the lower the most optimal policies but more o.o.d. data too!
+    "unlikely_action_threshold": 0.4,  # the lower the most optimal policies but more o.o.d. data too!
     "imitation_logits_penalty": 0.001,  # 0.001
 }
 

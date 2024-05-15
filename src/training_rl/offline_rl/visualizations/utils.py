@@ -1,6 +1,4 @@
 import functools
-import os.path
-import xml.etree.ElementTree as ET
 from itertools import accumulate
 
 import gymnasium as gym
@@ -13,7 +11,6 @@ from tianshou.policy import ImitationPolicy, BasePolicy
 from torch import nn
 from tqdm import tqdm
 
-from training_rl.offline_rl.config import get_offline_rl_abs_path
 from training_rl.offline_rl.custom_envs.custom_envs_registration import EnvFactory
 from training_rl.offline_rl.offline_policies.minimal_GPT_model import DecisionTransformer
 from training_rl.offline_rl.offline_trainings.training_decision_transformer import evaluate_on_env
@@ -126,7 +123,7 @@ def get_state_action_data_and_policy_grid_distributions(
         if state_action_count_policy is not None:
             state_action_histogram(
                 state_action_count_policy,
-                title="State-Action data distribution",
+                title="State-Action policy distribution",
                 new_keys_for_state_action_count_plot=new_keys
             )
             compare_state_action_histograms(state_action_count_data, state_action_count_policy)
@@ -208,7 +205,7 @@ def policy_rollout_torcs_env(
         driver_policy: BehaviorPolicyType | BasePolicy | nn.Module | Callable,
         advisor_policy: BehaviorPolicyType | BasePolicy | nn.Module | Callable | None = None,
         env_collected_quantities: str | List[str] | None = None,
-        num_steps: int = 1000,
+        num_steps: int | None = 10000,
 ) -> Dict[str, List]:
     """
     It creates a rollout using the driver policy and collects the 'observation_name' from the environment.
@@ -220,7 +217,7 @@ def policy_rollout_torcs_env(
     :param driver_policy:
     :param advisor_policy:
     :param env_collected_quantities:
-    :param num_steps:
+    :param num_steps: if None it will run until the done condition in the environment is True
     """
 
     def get_policy(policy: BehaviorPolicyType | BasePolicy | nn.Module | Callable):
@@ -260,6 +257,9 @@ def policy_rollout_torcs_env(
     obs, _ = env.reset()
 
     done = False
+
+    num_steps = 1000000 if num_steps is None else num_steps
+
     for num_step in range(num_steps):
         if done:
             break

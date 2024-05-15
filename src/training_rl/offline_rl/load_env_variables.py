@@ -1,8 +1,8 @@
 import os
 
 
-def load_env_variables():
-    current_directory = os.path.dirname(__file__)
+def load_env_variables(current_directory: str | None = None):
+    current_directory = os.path.dirname(__file__) if current_directory is None else current_directory
     mujoco_directory = os.path.expanduser("~/.mujoco")
 
     env_variables = os.environ.update(
