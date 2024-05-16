@@ -39,6 +39,7 @@ def get_state_action_data_and_policy_grid_distributions(
     num_episodes: int = 1,
     logits_sampling: bool = False,
     plot: bool = True,
+    normalized: bool = True,
 ) -> Tuple[Dict, Dict]:
     """
 
@@ -48,6 +49,7 @@ def get_state_action_data_and_policy_grid_distributions(
     :param num_episodes: the number of episodes used to generate the policy state-action distribution.
     :param logits_sampling: if False the action will be provided (usually arg_max [Q(s,a)] ) otherwise the
         q-values will be sampled. Useful for imitation learning to compare the data and policy distributions.
+    :param normalized: if True the histograms are normalized.
     :return:
     """
 
@@ -118,13 +120,15 @@ def get_state_action_data_and_policy_grid_distributions(
         state_action_histogram(
             state_action_count_data,
             title="State-Action data distribution",
-            new_keys_for_state_action_count_plot=new_keys
+            new_keys_for_state_action_count_plot=new_keys,
+            normalized=normalized
         )
         if state_action_count_policy is not None:
             state_action_histogram(
                 state_action_count_policy,
                 title="State-Action policy distribution",
-                new_keys_for_state_action_count_plot=new_keys
+                new_keys_for_state_action_count_plot=new_keys,
+                normalized=normalized
             )
             compare_state_action_histograms(state_action_count_data, state_action_count_policy)
 

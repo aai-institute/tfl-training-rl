@@ -48,7 +48,7 @@ def get_dataset_path_d4rl(dataset_id):
 def state_action_histogram(
     state_action_count: Dict[Any, int],
     title: str = None,
-    normalized=True,
+    normalized=False,
     inset_pos_xy: bool = True,
     new_keys_for_state_action_count_plot: list[Any] = None,
 ):

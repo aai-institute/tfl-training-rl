@@ -96,12 +96,20 @@ def behavior_policy_8x8_grid_deterministic_0_0_to_4_7(
     """
     state_index = one_hot_to_integer(state)
     state_xy = env.to_xy(state_index)
-    if state_xy[1] == 7:
-        return 0
-    elif state_xy[0] == 4:
-        return 3
+
+    #if (4 <= state_xy[1] <= 6) and state_xy[0] == 2:
+    #    return 2
+    if state_xy[1] == 4:
+        action = 0
+    elif state_xy[0] == 7:
+        action = 3
     else:
-        return 1
+        action = 1
+
+    if not env.discrete_action:
+        return np.eye(env.action_space.shape[0])[action]
+    else:
+        return action
 
 
 def behavior_policy_8x8_grid_suboptimal_0_0_to_4_7(state: np.ndarray, env: Custom2DGridEnv) -> int:
@@ -210,7 +218,14 @@ def behavior_policy_8x8_grid_avoid_vertical_obstacle(
 
 
 def move_right(state: np.ndarray, env: Custom2DGridEnv) -> int:
-    return 3
+
+    action = 3
+
+    if not env.discrete_action:
+        return np.eye(env.action_space.shape[0])[action]
+    else:
+        return action
+
 
 
 def horizontal_random_walk(state: np.ndarray, env: Custom2DGridEnv) -> int:
