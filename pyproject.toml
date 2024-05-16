@@ -34,7 +34,7 @@ matplotlib = "^3.8.0"
 notebook = "<7.0.0"
 rise = "^5.7.1"
 seaborn = "^0.13.0"
-tianshou = {git = "https://github.com/thu-ml/tianshou.git", rev = "8d3d1f1"}
+tianshou = {git = "https://github.com/thu-ml/tianshou.git", rev = "f0b7abe"}
 traitlets = "5.9.0"
 # special sauce b/c of a flaky bug in poetry on windows
 # see https://github.com/python-poetry/poetry/issues/7611#issuecomment-1466478926
@@ -42,10 +42,6 @@ virtualenv = [
     { version = "^20.4.3,!=20.4.5,!=20.4.6" },
     { version = "<20.16.4", markers = "sys_platform == 'win32'" },
 ]
-
-[tool.poetry.group.add1]
-optional = true
-[tool.poetry.group.add1.dependencies]
 jsonargparse = "^4.25.0"
 numba = "^0.57.1"
 # b/c of numba
@@ -53,37 +49,12 @@ numpy = "<=1.24"
 overrides = "^7.4.0"
 packaging = "*"
 pandas = {extras = ["performance"], version = "^2.1.0"}
-pettingzoo = "^1.24.1"
 
-[tool.poetry.group.add2]
-optional = true
-[tool.poetry.group.add2.dependencies]
 celluloid = "^0.2.0"
 docstring-parser = "^0.15"
 gymnasium = {extras = ["atari", "accept-rom-license", "classic-control", "mujoco"], version = "^0.28.0"}
 h5py = "^3.9.0"
 tensorboard = "^2.5.0"
-# Torch 2.0.1 causes problems, see https://github.com/pytorch/pytorch/issues/100974
-torch = "^2.0.0, !=2.0.1, !=2.1.0"
-tqdm = "*"
-
-[tool.poetry.group.control]
-optional = true
-[tool.poetry.group.control.dependencies]
-control = "^0.9.4"
-do-mpc = "^4.6.1"
-gymnasium = {extras = ["classic-control", "mujoco"], version = "^0.28.0"}
-mediapy = "^1.1.9"
-networkx = "^3.1"
-
-[tool.poetry.group.offline]
-optional = true
-[tool.poetry.group.offline.dependencies]
-chardet ="*"
-minari = "^0.4.2"
-opencv-python="*"
-pygame = "*"
-tensorboardX="*"
 
 
 [tool.poetry.group.dev]
