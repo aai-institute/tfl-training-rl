@@ -6,7 +6,6 @@ that was further customized for appliedAI purposes
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400&display=swap');
 
 
-/*
 body {
     font-family: 'Work Sans', sans-serif !important;
     text-transform: initial !important;
@@ -21,10 +20,9 @@ body {
 .reveal, div.text_cell_render, .md-slide, .sidebar-wrapper {
     font-size: 1.5rem !important;
 }
-*/
 
 .navbar-default .navbar-nav > li > a {
-    color: #00747b !important;
+    color: #18a5a7 !important;
 }
 
 .filename {
@@ -38,7 +36,7 @@ body {
 }
 
 h1, h2 {
-    color: #00747b !important;
+    color: #18a5a7 !important;
 }
 
 h3, h4, h5, h6 {
@@ -68,11 +66,10 @@ body.rise-enabled .reveal ol, body.rise-enabled .reveal dl, body.rise-enabled .r
     margin-top: 0.2em;
 }
 
-/*
 .CodeMirror-lines, .output_text {
     font-size: 1.5rem !important;
 }
-*/
+
 
 h1.plan, h2.plan, h3.plan {
     text-align: center;
@@ -117,14 +114,14 @@ div.plan-container {
 
 #toc, #toc-wrapper, .toc-item-num, #toc a, .toc {
     margin: auto !important;
-    color: #00747b !important;
+    color: #18a5a7 !important;
 }
 
 #toc-wrapper {
     top: auto !important;
     bottom: auto !important;
     margin-top: 2rem !important;
-    color: #00747b !important;
+    color: #18a5a7 !important;
 }
 
 
@@ -148,9 +145,7 @@ div.plan-container {
 
 
 .md-slide.title {
-    position: relative;
-    top: -50%;
-    margin-left: 5%;
-    font-size: 4em !important;
-    line-height: 1.6;
+  position: relative;
+  top: -50%;
+  margin-left: 5%;
 }
